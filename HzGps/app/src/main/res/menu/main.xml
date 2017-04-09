@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:title="注册"
+        android:id="@+id/main_register"
+        />
+    <item
+        android:id="@+id/main_erweima"
+        android:title="二维码"
+        android:checkable="false" />vc
+    <item
+        android:title="工作表"
+        android:id="@+id/main_getdata"
+        />
+
+</menu>
