@@ -1,11 +1,13 @@
-package com.sy.hzgps;
+package com.sy.hzgps.logregist;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.sy.hzgps.tool.AndroidCheckVersion;
+import com.sy.hzgps.MainActivity;
+import com.sy.hzgps.R;
+import com.sy.hzgps.tool.lh.AndroidCheckVersion;
 
 public class LoginActivity extends AppCompatActivity {
 

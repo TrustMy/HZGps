@@ -1,4 +1,4 @@
-package com.sy.hzgps;
+package com.sy.hzgps.tool.qrcode;
 
 import java.io.FileNotFoundException;
 

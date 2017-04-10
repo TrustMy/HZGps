@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 
 
-import com.sy.hzgps.ServerType;
+import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.message.CommonMessage;
 import com.sy.hzgps.message.GpsMessage;
 import com.sy.hzgps.message.ObdMessage;

@@ -2,7 +2,7 @@ package com.sy.hzgps.protocol;
 
 
 
-import com.sy.hzgps.tool.Tools;
+import com.sy.hzgps.tool.sy.Tools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

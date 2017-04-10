@@ -12,15 +12,14 @@ import android.os.Message;
 import android.util.Log;
 
 
-import com.sy.hzgps.EngineStatus;
-import com.sy.hzgps.ServerType;
+import com.sy.hzgps.tool.sy.EngineStatus;
+import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.gps.GpsHelper;
 import com.sy.hzgps.message.CommonMessage;
 import com.sy.hzgps.message.ObdMessageID;
 import com.sy.hzgps.message.ca.CALocationReportMessage;
 import com.sy.hzgps.network.CommHelper;
 import com.sy.hzgps.network.ca.CACommHelper;
-import com.sy.hzgps.tool.L;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

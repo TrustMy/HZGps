@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.SyncStateContract;
 
 
-import com.sy.hzgps.Constants;
+import com.sy.hzgps.tool.sy.Constants;
 import com.sy.hzgps.MyContext;
-import com.sy.hzgps.ServerType;
+import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.message.CommonMessage;
 import com.sy.hzgps.message.ObdMessage;
 import com.sy.hzgps.message.ObdMessageID;
@@ -19,7 +18,7 @@ import com.sy.hzgps.protocol.SY808Message;
 import com.sy.hzgps.protocol.SY808MessageHeader;
 import com.sy.hzgps.protocol.SY_8001;
 import com.sy.hzgps.protocol.SY_81AA;
-import com.sy.hzgps.tool.Tools;
+import com.sy.hzgps.tool.sy.Tools;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFuture;

@@ -1,4 +1,4 @@
-package com.sy.hzgps.tool;
+package com.sy.hzgps.tool.lh;
 
 import android.Manifest;
 import android.app.Activity;

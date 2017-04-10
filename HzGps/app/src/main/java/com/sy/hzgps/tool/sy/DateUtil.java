@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.sy.hzgps.tool;
+package com.sy.hzgps.tool.sy;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

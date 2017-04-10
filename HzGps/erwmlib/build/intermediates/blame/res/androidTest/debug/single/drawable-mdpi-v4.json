@@ -4,7 +4,15 @@
         "source": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_launcher.png"
     },
     {
+        "merged": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\navbar.png",
+        "source": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\navbar.png"
+    },
+    {
         "merged": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\navbar.png",
         "source": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\navbar.png"
+    },
+    {
+        "merged": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\ic_launcher.png",
+        "source": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_launcher.png"
     }
 ]

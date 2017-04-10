@@ -2,22 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/dialog_bg"
     tools:context="com.sy.hzgps.MainActivity">
+
+   <LinearLayout
+
+       android:background="@drawable/dialog_bg"
+       android:gravity="center"
+       android:orientation="vertical"
+       android:layout_width="300dp"
+       android:layout_height="wrap_content">
+
+   <TextView
+       android:textColor="#01B8EE"
+       android:layout_margin="10dp"
+       android:gravity="center"
+       android:textSize="16sp"
+       android:text="行程结束\n请向管理员出示二维码"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
    <ImageView
        android:id="@+id/dialog_qr"
+       android:src="@mipmap/ic_launcher"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
 
    <TextView
+       android:gravity="center"
+       android:text="时间"
        android:id="@+id/dialog_time"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
+
+
    <Button
+       android:textColor="#ffffff"
+       android:layout_marginTop="10dp"
        android:id="@+id/dialog_btn"
        android:text="确定"
-       android:layout_width="wrap_content"
+       android:textSize="16sp"
+       android:background="@drawable/dialog_btn"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content" />
 
+   </LinearLayout>
 </LinearLayout>

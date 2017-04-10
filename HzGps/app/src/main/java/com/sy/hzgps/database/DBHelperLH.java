@@ -5,7 +5,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.sy.hzgps.tool.L;
+import com.sy.hzgps.tool.lh.L;
 
 /**
  * Created by Trust on 2017/4/8.

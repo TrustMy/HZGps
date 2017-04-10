@@ -12,14 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.SyncStateContract;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 
-import com.sy.hzgps.Constants;
+import com.sy.hzgps.tool.sy.Constants;
 import com.sy.hzgps.MyContext;
-import com.sy.hzgps.ServerType;
+import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.database.DBManager;
 import com.sy.hzgps.message.CommonMessage;
 import com.sy.hzgps.message.ObdMessage;

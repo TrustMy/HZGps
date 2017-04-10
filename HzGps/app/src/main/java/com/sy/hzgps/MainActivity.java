@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.icu.text.BreakIterator;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,12 +24,11 @@ import com.sy.hzgps.database.DBHelperLH;
 import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.getdata.GetDataActivity;
 import com.sy.hzgps.server.MyService;
-import com.sy.hzgps.tool.AndroidCheckVersion;
-import com.sy.hzgps.tool.L;
+import com.sy.hzgps.tool.lh.AndroidCheckVersion;
+import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.dialog.DialogTool;
 import com.sy.hzgps.tool.qrcode.QRcodeTool;
 
-import java.lang.ref.ReferenceQueue;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
@@ -42,6 +37,10 @@ public class MainActivity extends BaseActivity {
     private TextView workMsg;
     private DBHelperLH dbHelperLH;
     private DBManagerLH dbManagerLH;
+
+    private EditText editText;
+
+    private String msg = "{name:张三,starttime:2017327,endtime:2047327,num:12345678912456789}";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +65,15 @@ public class MainActivity extends BaseActivity {
         dbManagerLH = new DBManagerLH(this);
 
         workMsg = findView(R.id.main_work_msg);
+
+        editText = findView(R.id.ed);
+
+
+        Button start = findView(R.id.start);
+        Button end = findView(R.id.end);
+        setOnClick(start);
+        setOnClick(end);
+
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
@@ -140,7 +148,7 @@ public class MainActivity extends BaseActivity {
                 }else{
 //                    test.setImageBitmap(qRcodeBeen.get(0).getBitmap());
                     DialogTool.showDialog(this,R.layout.dialog_qr,qRcodeBeen.get(0)
-                            .getBitmap(),"shijian");
+                            .getBitmap(),qRcodeBeen.get(0).getTime());
                 }
                 break;
             case R.id.main_getdata:
@@ -148,21 +156,22 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(new Intent(MainActivity.this, GetDataActivity.class),1);
 
                 break;
+
         }
         return true;
     }
 
     private void setQRcode() {
         try {
-            Bitmap bitmap = QRcodeTool.getQRcode("{name:张三,starttime:2017327,endtime:2047327,num:12345678912456789}",400);
-            DialogTool.showDialog(this,R.layout.dialog_qr,bitmap,"2017/4/9");
+            String time = TimeTool.getSystemTime();
+            Bitmap bitmap = QRcodeTool.getQRcode(msg,600);
+            DialogTool.showDialog(this,R.layout.dialog_qr,bitmap, time);
 
             List<QRcodeBean> qRcodeBeens = dbManagerLH.select();
             if(qRcodeBeens!= null&& qRcodeBeens.size() != 0){
-                dbManagerLH.update(bitmap,"098");
-            }else
-            {
-                dbManagerLH.add(bitmap,"123");
+                dbManagerLH.update(bitmap,time);
+            }else {
+                dbManagerLH.add(bitmap,time);
             }
 
 
@@ -172,5 +181,22 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
+    @Override
+    public void onClick(View view) {
+        /**
+         * 设置edittext 可编辑和不可编辑
+         */
+        switch (view.getId()){
+            case R.id.start:
+//                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.setEnabled(false);
+                Toast.makeText(this,"start",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.end:
+//                editText.setInputType(InputType.TYPE_NULL);
+                editText.setEnabled(true);
+                Toast.makeText(this,"end",Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
 }

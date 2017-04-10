@@ -1,4 +1,4 @@
-package com.sy.hzgps;
+package com.sy.hzgps.tool.sy;
 
 /**
  * Created by jiayang on 2016/7/12.

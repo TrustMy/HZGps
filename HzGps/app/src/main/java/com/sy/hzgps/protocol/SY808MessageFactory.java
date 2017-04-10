@@ -1,8 +1,8 @@
 package com.sy.hzgps.protocol;
 
 
-import com.sy.hzgps.tool.ClassUtils;
-import com.sy.hzgps.tool.Tools;
+import com.sy.hzgps.tool.sy.ClassUtils;
+import com.sy.hzgps.tool.sy.Tools;
 
 public class SY808MessageFactory {
 	public static IMessageBody Create(short messageType, byte[] messageBodyBytes) {

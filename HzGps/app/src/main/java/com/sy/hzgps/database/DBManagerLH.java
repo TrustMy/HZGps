@@ -6,10 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.sy.hzgps.bean.QRcodeBean;
-import com.sy.hzgps.tool.L;
+import com.sy.hzgps.tool.lh.L;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

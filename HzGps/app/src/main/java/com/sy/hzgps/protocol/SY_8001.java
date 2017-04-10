@@ -1,7 +1,7 @@
 package com.sy.hzgps.protocol;
 
 
-import com.sy.hzgps.tool.BitConverter;
+import com.sy.hzgps.tool.sy.BitConverter;
 
 /**
  *  平台通用应答
