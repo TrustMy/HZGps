@@ -1,18 +1,10 @@
 [
     {
-        "merged": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\main.xml",
-        "source": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\layout\\main.xml"
-    },
-    {
         "merged": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\camera.xml",
         "source": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\layout\\camera.xml"
     },
     {
         "merged": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\main.xml",
         "source": "D:\\workSpace\\HzGpsSy\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\layout\\main.xml"
-    },
-    {
-        "merged": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\camera.xml",
-        "source": "F:\\work\\HzGps_71493\\HzGps\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\layout\\camera.xml"
     }
 ]

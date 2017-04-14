@@ -1,15 +1,22 @@
 package com.sy.hzgps.getdata;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sy.hzgps.Config;
 import com.sy.hzgps.MainActivity;
+import com.sy.hzgps.MyContext;
 import com.sy.hzgps.R;
+import com.sy.hzgps.bean.OrderBean;
+import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
 
 import java.util.List;
 
@@ -18,9 +25,9 @@ import java.util.List;
  */
 
 public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecyclerAdapter.ViewHolder> {
-    private List<String> ml ;
+    private List<OrderBean> ml ;
 
-    public void setMl(List<String> ml) {
+    public void setMl(List<OrderBean> ml) {
         this.ml = ml;
     }
 
@@ -32,7 +39,7 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
         viewHolder.views.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                t.click(v,ml.get(viewHolder.getAdapterPosition()));
+//                t.click(v,ml.get(viewHolder.getpo));
                 /*
                 int pos = viewHolder.getAdapterPosition();
                 String msgItem = ml.get(pos);
@@ -41,12 +48,35 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
                 */
             }
         });
+        viewHolder.submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = viewHolder.getAdapterPosition();
+//                T.showToast(view.getContext(),"你点击了订单号:"+ml.get(pos).getOrder());
+                t.click(view,ml.get(pos));
+            }
+        });
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.msgTv.setText(ml.get(position));
+        L.d(ml.get(position).getStatus()+"");
+        holder.termIdTv.setText(ml.get(position).getTermId()+"");
+        holder.orderTv.setText(ml.get(position).getOrder());
+        holder.timeTv.setText(ml.get(position).getTime());
+        holder.startTv.setText(ml.get(position).getStartName());
+        holder.endTv.setText(ml.get(position).getEndName());
+        int status = ml.get(position).getStatus();
+        if(status == Config.SAVE_STATUS_SUCCESS){
+            holder.statusTv.setTextColor(Color.parseColor("#98E165"));
+            holder.statusTv.setText("提交成功");
+            holder.submitBtn.setVisibility(View.GONE);
+        }else {
+            holder.statusTv.setTextColor(Color.parseColor("#ff0000"));
+            holder.statusTv.setText("提交失败");
+            holder.submitBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -55,19 +85,27 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView msgTv;
+        TextView termIdTv,orderTv,startTv,endTv,timeTv,statusTv;
+        Button submitBtn;
         View views;
         public ViewHolder(View itemView) {
             super(itemView);
             views = itemView;
-            msgTv = (TextView) itemView.findViewById(R.id.get_recycler_item_msg);
+            termIdTv = (TextView) itemView.findViewById(R.id.get_recycler_item_termid);
+            orderTv = (TextView) itemView.findViewById(R.id.get_recycler_item_order);
+            startTv = (TextView) itemView.findViewById(R.id.get_recycler_item_start);
+            endTv = (TextView) itemView.findViewById(R.id.get_recycler_item_end);
+            timeTv = (TextView) itemView.findViewById(R.id.get_recycler_item_time);
+            statusTv = (TextView) itemView.findViewById(R.id.get_recycler_item_status);
+            submitBtn = (Button) itemView.findViewById(R.id.get_recycler_item_submit);
+
         }
     }
     
 
 
     interface test{
-        void  click(View v,String msg);
+        void  click(View v,OrderBean orderBean);
     }
     test t;
 

@@ -22,6 +22,8 @@
     <!-- 从SDCard读取数据权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
+
     <application
         android:name=".MyContext"
         android:allowBackup="true"
@@ -30,16 +32,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask">
 
         </activity>
         <activity android:name=".QRCodeActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <service android:name=".server.MyService" />
 
         <activity android:name=".logregist.LoginActivity"
-            android:launchMode="singleTask">
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,6 +51,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".getdata.GetDataActivity"
+            android:screenOrientation="portrait"
          ></activity>
     </application>
 

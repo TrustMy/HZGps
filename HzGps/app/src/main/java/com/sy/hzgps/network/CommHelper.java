@@ -16,6 +16,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 
+import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.sy.Constants;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.tool.sy.ServerType;
@@ -243,6 +244,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
 
                 if (message != null) {
                     logger.info("Fetched a task from DB");
+                    L.d("Fetched a task from DB");
                     taskQueue.offer(message);
                 }
             }
@@ -289,31 +291,40 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
                     switch ( message.getMessageId() ) {
                         case REGISTER:
                             logger.info("---Register---");
+                            L.d("---Register---");
                             break;
 
                         case AUTHENTICATE:
                             logger.info("---Authenticate---");
+                            L.d("---Authenticate---");
                             break;
                         case HEARTBEAT:
                             logger.info("---HeatBeat---");
+                            L.d("---HeatBeat---");
                             break;
                         case OBD_REPORT:
                             logger.info("---LRP---");
+                            L.d("---LRP---");
                             break;
                         case OVER_SPEED_ALARM:
                             logger.info("---Over Speed Alarm---");
+                            L.d("---Over Speed Alarm---");
                             break;
                         case ENGINE_ON:
                             logger.info("---Engine On---");
+                            L.d("---Engine On---");
                             break;
                         case ENGINE_OFF:
                             logger.info("---Engine Off---");
+                            L.d("---Engine Off---");
                             break;
                         case TRIP_REPORT:
                             logger.info("---Trip---");
+                            L.d("---Trip---");
                             break;
                         default:
                             logger.info("---UnKnown---");
+                            L.d("---UnKnown---");
                             break;
                     }
 
@@ -368,7 +379,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
     protected void init() {
 
         logger.info("CommHelper init");
-
+        L.d("CommHelper init");
         // 注册数据通道监听器
         //registerPhoneStateListener();
 
@@ -489,7 +500,8 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
 
                     logger.info(String.format("Save to DB, SN = 0x%04x, Type = 0x%04x",
                             message.getSerialNo(), message.getMessageId().value()));
-
+                    L.d(String.format("Save to DB, SN = 0x%04x, Type = 0x%04x",
+                            message.getSerialNo(), message.getMessageId().value()));
                 } catch (IOException e) {
                     logger.error(e.getLocalizedMessage());
                 }
@@ -573,7 +585,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
             //Toast.makeText(context, intent.getAction(), 1).show();
             if ( isNetConnected() ) {
                 logger.info("Data connected");
-
+                L.d("Data connected");
                 if ( !carrierReachable ) {
 
                     handler.sendEmptyMessage(CommonMessage.MSG_DATA_TUNNEL_CONNECTED);
@@ -584,7 +596,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
             } else {
 
                 logger.info("Data disconnected");
-
+                L.d("Data disconnected");
 
                 if ( carrierReachable ) {
 
@@ -607,7 +619,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
     protected void registerPhoneStateListener() {
 
         logger.info("start registerPhoneStateListener");
-
+        L.d("start registerPhoneStateListener");
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 
@@ -619,7 +631,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
                     case TelephonyManager.DATA_CONNECTED:
 
                         logger.info("Data connected");
-
+                        L.d("Data connected");
                         if ( !carrierReachable ) {
 
                             handler.sendEmptyMessage(CommonMessage.MSG_DATA_TUNNEL_CONNECTED);
@@ -633,7 +645,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
 
                         logger.info("Data disconnected");
 
-
+                        L.d("Data disconnected");
                         if ( carrierReachable ) {
 
                             handler.sendEmptyMessage(CommonMessage.MSG_DATA_TUNNEL_DISCONNECTED);

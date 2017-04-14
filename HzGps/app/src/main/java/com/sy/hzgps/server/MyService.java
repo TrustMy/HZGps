@@ -12,6 +12,9 @@ import android.os.Message;
 import android.util.Log;
 
 
+import com.sy.hzgps.Config;
+import com.sy.hzgps.MainActivity;
+import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.sy.EngineStatus;
 import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.gps.GpsHelper;
@@ -45,7 +48,19 @@ public class MyService extends Service {
 
     private boolean IsStopLoading = false;
 
+    public static Handler mainHandler;
 
+    private Handler timeHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case Config.TIME:
+                    mainHandler.sendEmptyMessage(Config.TIME);
+                    timeHandler.sendEmptyMessageDelayed(Config.TIME,60*1000);
+                    break;
+            }
+        }
+    };
 
     public MyService() {
 
@@ -102,6 +117,7 @@ public class MyService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
 
+
         //logger.info("Service Unbinded .............................");
 
         return super.onUnbind(intent);
@@ -130,6 +146,7 @@ public class MyService extends Service {
     public void registerToServer(String license, String terminalId) {
 
         logger.info("register to server ...");
+        L.d("register to server ...");
         commHelper.setTerminalId(terminalId);
         commHelper.setLicense(license);
         commHelper.setNeedRegister(true);
@@ -151,7 +168,7 @@ public class MyService extends Service {
             public void run() {
                 for (int i =0;i<10;i++)
                 {
-                    Log.d("MyService", "i:.." + i);
+//                    Log.d("MyService", "i:.." + i);
                     if(i == 9)
                     {
                         IsStopLoading =true;
@@ -227,6 +244,7 @@ public class MyService extends Service {
 
         commHandler.sendMessage(message);
 
+        timeHandler.sendEmptyMessageDelayed(Config.TIME,60*1000);
 
     }
 
@@ -278,7 +296,7 @@ public class MyService extends Service {
         //    commHandler.sendEmptyMessage(CommonMessage.MSG_DISCONNECT_FROM_SERVER);
         //}
 
-
+        timeHandler.removeMessages(Config.TIME);
     }
 
     public void setReadyToRegister() {

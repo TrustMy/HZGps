@@ -3,10 +3,14 @@ package com.sy.hzgps.network.ca;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 
+import com.sy.hzgps.Config;
+import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.sy.Constants;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.tool.sy.ServerType;
@@ -72,6 +76,7 @@ public class CACommHelper extends CommHelper {
         this.registered = v;
     }
 
+    public static Handler loginHandler;
     @Override
     protected void initCommParams() {
         super.initCommParams();
@@ -97,12 +102,14 @@ public class CACommHelper extends CommHelper {
 
 
         logger.info("Session Opened");
+        L.d("Session Opened");
 
         isWaitForResponse = false;
+        L.d("registered:"+registered+"|commClosed:"+commClosed+"|needRegister:"+needRegister);
         if ( registered ) {
 
             logger.info("Authenticate after connection");
-
+            L.d("Authenticate after connection");
             synchronized (commClosed ) {
                 commClosed = false;
             }
@@ -111,7 +118,7 @@ public class CACommHelper extends CommHelper {
         } else {
             if ( needRegister ) {
                 logger.info("Register after connection");
-
+                L.d("Register after connection");
                 synchronized (commClosed ) {
                     commClosed = false;
                 }
@@ -126,7 +133,7 @@ public class CACommHelper extends CommHelper {
     public void sessionClosed(IoSession session) throws Exception {
 
         logger.info("Session closed");
-
+        L.d("Session closed");
         handler.sendEmptyMessageDelayed(CommonMessage.MSG_SERVER_DISCONNECTED, Constants.SECOND*5);
 
 
@@ -141,11 +148,13 @@ public class CACommHelper extends CommHelper {
             //putTask(new ObdMessage(ObdMessageID.HEARTBEAT, false), false);
 
             logger.info("no task to send, close session");
+            L.d("no task to send, close session");
             disConnectFromServer();
 
         } else if ( status == IdleStatus.READER_IDLE ) {
 
             logger.info("long time no message from server, close session");
+            L.d("long time no message from server, close session");
             //session.closeNow();
             disConnectFromServer();
         }
@@ -155,6 +164,7 @@ public class CACommHelper extends CommHelper {
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 
         logger.info("ExceptionCaught");
+        L.d("ExceptionCaught");
         //session.closeNow();
 
         disConnectFromServer();
@@ -165,6 +175,7 @@ public class CACommHelper extends CommHelper {
     public void inputClosed(IoSession session) throws Exception {
 
         logger.info("inputClose");
+        L.d("inputClose");
         //session.closeNow();
 
         disConnectFromServer();
@@ -192,6 +203,7 @@ public class CACommHelper extends CommHelper {
 
             default:
                 logger.info("Unknown Protocol 0x%04x", srvMessageHeader.getMessageType());
+                L.d("Unknown Protocol 0x%04x"+ srvMessageHeader.getMessageType());
                 break;
         }
 
@@ -240,6 +252,7 @@ public class CACommHelper extends CommHelper {
         } catch (Exception e) {
             String info = e.getLocalizedMessage();
             logger.error("message : " + info);
+            L.d("message : " + info);
         }
     }
 
@@ -274,6 +287,7 @@ public class CACommHelper extends CommHelper {
             case REG_SERVER:
                 url = regServerUrl;
                 port = regServerPort;
+                L.d("Connect to Register Server ... ... \" + regServerUrl + \":\" + regServerPort");
                 logger.info("Connect to Register Server ... ... " + regServerUrl + ":" + regServerPort);
                 break;
 
@@ -281,17 +295,20 @@ public class CACommHelper extends CommHelper {
                 url = serverUrl;
                 port = serverPort;
                 logger.info("Connect to Main Server ... ... " + serverUrl + ":" + serverPort);
+                L.d("Connect to Main Server ... ... " + serverUrl + ":" + serverPort);
                 break;
 
             case BACKUP_SERVER:
                 url = server2Url;
                 port = server2Port;
+                L.d("Connect to Backup Server ... ... " + server2Url + ":" + server2Port);
                 logger.info("Connect to Backup Server ... ... " + server2Url + ":" + server2Port);
                 break;
 
             default:
                 url = serverUrl;
                 port = serverPort;
+                L.d("default to connect to Main Server ... ... " + serverUrl + ":" + serverPort);
                 logger.info("default to connect to Main Server ... ... " + serverUrl + ":" + serverPort);
                 break;
 
@@ -320,7 +337,7 @@ public class CACommHelper extends CommHelper {
                     //isConnected = true;
                     //connStatus = ConnectStatus.CONNECTED;
                     logger.info("Connection is successfully!");
-
+                    L.d("Connection is successfully!");
 
                 } else {
                     session = null;
@@ -348,6 +365,7 @@ public class CACommHelper extends CommHelper {
 
                         }
                     } catch (InterruptedException e) {
+                        L.d("sleep exception!");
                         logger.error("sleep exception!");
                     }
 
@@ -409,7 +427,7 @@ public class CACommHelper extends CommHelper {
             if (session != null) {
 
                 logger.info("disconnect Mina");
-
+                L.d("disconnect Mina");
                 synchronized (isWaitForResponse) {
                     //取消服务器回复的检查
                     cancelResponseChecking();
@@ -460,7 +478,7 @@ public class CACommHelper extends CommHelper {
                     if (sendTimes < 3) {
 
                         logger.info("SN = " + serialNo + " sendTime = " + sendTimes );
-
+                        L.d("SN = " + serialNo + " sendTime = " + sendTimes);
                     } else {
 
                         //logger.info("SN = " + serialNo + " sendTime = " + sendTimes + " --------------------------");
@@ -537,13 +555,15 @@ public class CACommHelper extends CommHelper {
             if (replyResult == 0 || replyResult == 1 ) {
 
                 logger.info(String.format("Register Reply, SN = 0x%04x", messageSerialNo));
-
+                L.d(String.format("Register Reply, SN = 0x%04x", messageSerialNo));
 
                 //向注册页面发广播
 
                 intent.putExtra("results", true);
 
                 context.sendBroadcast(intent);
+
+                L.d("loging success");
 
 
 
@@ -568,7 +588,10 @@ public class CACommHelper extends CommHelper {
 
                 needRegister = false;
 
-
+                Message logMessage = new Message();
+                logMessage.what = Config.LOGING;
+                logMessage.arg1 = Config.LOGING_SUCCESS;
+                loginHandler.sendMessage(logMessage);
 
                 // 断开与RegServer的连接
                 //
@@ -587,9 +610,16 @@ public class CACommHelper extends CommHelper {
                         Tools.ToHexFormatString(message.writeToBytes()));
                 logger.info(info);
 
-                intent.putExtra("results",false);
 
-                context.sendBroadcast(intent);
+
+
+                Message logMessage = new Message();
+                logMessage.what = Config.LOGING;
+                logMessage.arg1 = Config.LOGING_ERROR;
+                logMessage.obj = "登录失败!请确定用户名输入正确.";
+                loginHandler.sendMessage(logMessage);
+
+
             }
         }
 
@@ -622,12 +652,12 @@ public class CACommHelper extends CommHelper {
 
             if ( replyResult == 1 ) {
                 logger.info("Invalid device reply");
+                Message message1 = Message.obtain();
+                message1.what = Config.LOGING;
+                message1.arg1 = Config.LOGING_ERROR;
+                message1.obj = "非注册司机,请尽快注册.否则无法产生数据!";
+                loginHandler.sendMessage(message1);
 
-                Intent intent = new Intent();
-                intent.setAction("detection");
-                intent.putExtra("user", false);
-
-                context.sendBroadcast(intent);
             }
 
             // 针对Type进行相应处理
@@ -640,10 +670,10 @@ public class CACommHelper extends CommHelper {
 
                         logger.info(String.format("Authentication Reply, SN = 0x%04x", messageSerialNo));
 
-
+                        L.d(String.format("Authentication Reply, SN = 0x%04x", messageSerialNo));
                     } else {
                         logger.info("---0102 replyResult = " + replyResult );
-
+                        L.d("---0102 replyResult = " + replyResult);
                     }
 
 
@@ -656,11 +686,11 @@ public class CACommHelper extends CommHelper {
                     if (replyResult == 0 || replyResult == 4) {
 
                         logger.info(String.format("0200 Reply, SN = 0x%04x", messageSerialNo));
-
+                        L.d(String.format("0200 Reply, SN = 0x%04x", messageSerialNo));
 
                     } else {
                         logger.info("---0200 replyResult = " + replyResult );
-
+                        L.d("---0200 replyResult = " + replyResult);
                     }
 
                     break;

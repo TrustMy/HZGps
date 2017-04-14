@@ -14,4 +14,9 @@ public class TimeTool {
         String systemTime = formatter.format(dateTime);
         return systemTime;
     }
+
+    public static long getSystemTimeDate(){
+        return    System.currentTimeMillis();
+    }
+
 }

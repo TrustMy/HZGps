@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+
+    >
+
+   <LinearLayout
+       android:background="@drawable/dialog_bg"
+       android:orientation="vertical"
+       android:layout_width="300dp"
+       android:layout_height="wrap_content">
+
+      <RelativeLayout
+          android:background="@drawable/dialog_title"
+          android:layout_width="match_parent"
+          android:layout_height="40dp">
+
+         <TextView
+             android:layout_centerInParent="true"
+             android:textColor="#ffffff"
+             android:text="订单详情"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+      </RelativeLayout>
+
+      <LinearLayout
+          android:layout_marginLeft="6dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="10dp"
+          android:layout_width="match_parent"
+          android:orientation="horizontal"
+          android:layout_height="wrap_content">
+
+      </LinearLayout>
+
+      <TextView
+          android:layout_marginLeft="6dp"
+          android:text="订单号:"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+      <TextView
+          android:layout_marginLeft="6dp"
+          android:id="@+id/dialog_order"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+      <LinearLayout
+          android:layout_marginBottom="10dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="6dp"
+          android:orientation="horizontal">
+         <TextView
+             android:text="完成时间:"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+         <TextView
+             android:id="@+id/dialog_time"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_marginBottom="10dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="6dp"
+          android:orientation="horizontal">
+
+         <TextView
+             android:text="司机编号:"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+         <TextView
+             android:id="@+id/dialog_termid"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_marginBottom="10dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="6dp"
+          android:orientation="horizontal">
+         <TextView
+             android:text="起点:"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+
+         <TextView
+             android:id="@+id/dialog_start"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_marginLeft="6dp"
+          android:layout_marginBottom="10dp"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:orientation="horizontal">
+         <TextView
+             android:text="终点:"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+         <TextView
+             android:id="@+id/dialog_end"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" />
+      </LinearLayout>
+
+   <Button
+       android:textColor="#ffffff"
+       android:layout_marginTop="10dp"
+       android:id="@+id/dialog_btn"
+       android:text="确定"
+       android:textSize="16sp"
+       android:background="@drawable/dialog_btn"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content" />
+
+   </LinearLayout>
+</LinearLayout>

@@ -8,9 +8,17 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center"
     tools:context="com.sy.hzgps.MainActivity">
 
+
+    <EditText
+        android:id="@+id/imei"
+        android:hint="imei"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <Button
+        android:visibility="gone"
         android:onClick="test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +31,7 @@
 
 
     <Button
+        android:visibility="gone"
         android:onClick="check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,11 +39,18 @@
 
     <Button
         android:onClick="check2"
-        android:text="check2"
+        android:text="扫一扫"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:onClick="submint"
+        android:id="@+id/submint"
+        android:text="提交"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <TextView
+        android:visibility="gone"
         android:text="获取SD卡二维码"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -44,6 +60,7 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:visibility="gone"
         android:onClick="getBitmap"
         android:text="获取SD中的二维码"
         android:layout_width="wrap_content"

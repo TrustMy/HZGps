@@ -23,6 +23,10 @@ public class DialogTool {
     public DialogTool() {
 
     }
+    public static  click onClick;
+      public interface click {
+        void onClick();
+    }
 
     public static void showDialog(Context context, int layout, Bitmap bitmap,String time){
 
@@ -45,6 +49,7 @@ public class DialogTool {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+
                 }
             });
         }

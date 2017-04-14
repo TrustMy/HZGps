@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="com.sy.hzadministrator.MainActivity">
+
+    <ImageView
+        android:src="@drawable/scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        />
+    <Button
+        android:textColor="#ffffff"
+        android:background="@drawable/btn_off_bg"
+        android:text="扫一扫"
+        android:layout_marginTop="30dp"
+        android:onClick="startQr"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:background="@drawable/btn_on_bg"
+        android:layout_marginTop="10dp"
+        android:text="订单记录"
+        android:textColor="#074059"
+        android:onClick="foundQr"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

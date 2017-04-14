@@ -1,62 +1,185 @@
 package com.sy.hzgps;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.WriterException;
+import com.sy.hzgps.bean.OrderBean;
 import com.sy.hzgps.bean.QRcodeBean;
+import com.sy.hzgps.bean.ShowGpsBean;
 import com.sy.hzgps.database.DBHelperLH;
 import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.getdata.GetDataActivity;
+import com.sy.hzgps.gps.GpsHelper;
+import com.sy.hzgps.message.ObdMessage;
+import com.sy.hzgps.request.PostNet;
+import com.sy.hzgps.request.PostRequest;
 import com.sy.hzgps.server.MyService;
+import com.sy.hzgps.tool.GenerateSequence;
+import com.sy.hzgps.tool.Server;
 import com.sy.hzgps.tool.lh.AndroidCheckVersion;
+import com.sy.hzgps.tool.lh.BitmapAndStringUtils;
+import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
 import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.dialog.DialogTool;
 import com.sy.hzgps.tool.qrcode.QRcodeTool;
 
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class MainActivity extends BaseActivity {
     private MyService myServer = null;
-    ImageView test;
-    private TextView workMsg;
+    private ImageView logo;
+    private  TextView workMsg , gpsMsg,timeTv;
+    private TextView promptTv,promptWorkTv;
     private DBHelperLH dbHelperLH;
     private DBManagerLH dbManagerLH;
 
-    private EditText editText;
+    private EditText startLocationEd,endLocationEd;
 
-    private String msg = "{name:张三,starttime:2017327,endtime:2047327,num:12345678912456789}";
+    private ImageButton start,end;
+
+    private static int timeMinute = 0;
+
+    private String startName,endName,time,order,IMEI,termIdstring;
+
+    private int termId;
+
+    private Bitmap qR;
+
+    private SharedPreferences pres;
+
+    private PostRequest postRequest;
+
+    private long startTime,endTime,generatePictureTime;
+
+    public  Handler dataHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case Config.GPS:
+                    if(msg.obj!= null){
+                    DecimalFormat df = new DecimalFormat("#0.0");
+                    ShowGpsBean showGpsBean = (ShowGpsBean) msg.obj;
+                    gpsMsg.setText(df.format(showGpsBean.getSpeed())+"");
+
+                }
+                    break;
+                case Config.TIME:
+                    timeMinute++;
+                    timeTv.setText(timeMinute+"");
+                    L.d("timeMinute:"+timeMinute);
+                    break;
+
+                case Config.SAVE_HISTORY:
+                    OrderBean orderBean = (OrderBean) msg.obj;
+                    Map<String,Object> map = new WeakHashMap<>();
+                    map.put("termId",orderBean.getTermId());
+                    map.put("order",orderBean.getOrder());
+                    map.put("startName",orderBean.getStartName());
+                    map.put("endName",orderBean.getEndName());
+                    map.put("qR",orderBean.getqR());
+                    map.put("time",orderBean.getTime());
+                    map.put("startTime",orderBean.getStartTime()+"");
+                    map.put("endTime",orderBean.getEndTime()+"");
+                    map.put("generatePictureTime",orderBean.getGeneratePictureTime()+"");
+                    map.put("status",orderBean.getStatus());
+                    L.d("orderBean.getStatus():"+orderBean.getStatus());
+                    dbManagerLH.addOrder(map);
+                    break;
+
+                case Config.ORDER:
+                    if(msg.arg1 == Config.RESULT_SUCCESS){
+                        saveData(Config.SAVE_STATUS_SUCCESS);
+                    }else{
+                        saveData(Config.SAVE_STATUS_ERROR);
+                    }
+                    break;
+            }
+        }
+    };
+
+
+    public String getMsg(String time){
+        if(!startName.equals("") && !endName.equals("")){
+            Map<String, Object> map = new WeakHashMap<String, Object>();
+            order = GenerateSequence.generateSequenceNo()+IMEI;
+            map.put("order",order );
+            map.put("termId",termId);
+            map.put("startName",startName);
+            map.put("endName",endName);
+            map.put("time",time);
+            map.put("startTime",startTime+"");
+            map.put("endTime",endTime+"");
+            map.put("generatePictureTime",generatePictureTime+"");
+            JSONObject jsonObject = new JSONObject(map);
+
+            return jsonObject.toString();
+        }else{
+            return null;
+        }
+
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         new AndroidCheckVersion(this).checkVersion();
-
+        init();
+        initView();
         if(myServer == null)
         {
             bindService(new Intent(MainActivity.this,MyService.class),serviceConnection, Context.BIND_AUTO_CREATE);
         }
 
-        test = (ImageView) findViewById(R.id.test);
-        initView();
+        MyService.mainHandler = dataHandler;
+        GpsHelper.mainHandler = dataHandler;
+
+        pres = MainActivity.this.getSharedPreferences("CommParams", Activity.MODE_PRIVATE);
+        IMEI = pres.getString("terminalId",null);
+        termIdstring = pres.getString("license",null);
+        termId = Integer.parseInt(termIdstring);
+        if(IMEI == null || termIdstring == null){
+            T.showToast(MainActivity.this,"请插入sim卡!或账号为null");
+        }
+
     }
 
+    private void init() {
+        postRequest = new PostRequest(this,dataHandler);
+    }
 
 
     private void initView() {
@@ -65,15 +188,20 @@ public class MainActivity extends BaseActivity {
         dbManagerLH = new DBManagerLH(this);
 
         workMsg = findView(R.id.main_work_msg);
+        gpsMsg = findView(R.id.main_gps);
 
-        editText = findView(R.id.ed);
+        startLocationEd = findView(R.id.main_start_location_ed);
+        endLocationEd = findView(R.id.main_end_location_ed);
 
+        logo = findView(R.id.main_logo);
 
-        Button start = findView(R.id.start);
-        Button end = findView(R.id.end);
-        setOnClick(start);
-        setOnClick(end);
+        start = findView(R.id.main_start_gps);
+        end = findView(R.id.main_end_gps);
 
+        promptTv = findView(R.id.main_prompt);
+        promptWorkTv = findView(R.id.main_prompt_work);
+
+        timeTv = findView(R.id.main_time);
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
@@ -92,13 +220,73 @@ public class MainActivity extends BaseActivity {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void startGps(View v)
     {
+        startName = startLocationEd.getText().toString().trim();
+        endName = endLocationEd.getText().toString().trim();
+        if(!endName .equals("")&& !startName.equals("")){
+
+        start.setVisibility(View.GONE);
+        end.setVisibility(View.VISIBLE);
+
+        logo.setImageResource(R.drawable.truck_on);
+        promptTv.setVisibility(View.VISIBLE);
+        promptWorkTv.setVisibility(View.VISIBLE);
+
+        startLocationEd.setEnabled(false);
+        endLocationEd.setEnabled(false);
+
         myServer.startWorking();
+
+        startTime = TimeTool.getSystemTimeDate();
+        timeTv.setText("0");
+        }else{
+            T.showToast(this,"起点或终点输入有误!");
+        }
     }
 
     public void endGps(View v)
     {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("本次行程结束?");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                endTime = TimeTool.getSystemTimeDate();
+                generatePictureTime = endTime;
+                closeGps();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void closeGps() {
+        start.setVisibility(View.VISIBLE);
+        end.setVisibility(View.GONE);
+
+        logo.setImageResource(R.drawable.truck);
+        promptTv.setVisibility(View.GONE);
+        promptWorkTv.setVisibility(View.GONE);
+
+        startLocationEd.setEnabled(true);
+        endLocationEd.setEnabled(true);
+
         myServer.stopWorking();
         setQRcode();
+
+        timeMinute = 0;
+        timeTv.setText("---------");
+
+
+
     }
 
     @Override
@@ -120,7 +308,7 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == 1){
             String t = data.getStringExtra("startTime");
-            workMsg.setText(t);
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -137,7 +325,6 @@ public class MainActivity extends BaseActivity {
         {
             case R.id.main_register:
                 Toast.makeText(this,"注册",Toast.LENGTH_LONG).show();
-
 
                 break;
             case R.id.main_erweima:
@@ -163,16 +350,22 @@ public class MainActivity extends BaseActivity {
 
     private void setQRcode() {
         try {
-            String time = TimeTool.getSystemTime();
-            Bitmap bitmap = QRcodeTool.getQRcode(msg,600);
-            DialogTool.showDialog(this,R.layout.dialog_qr,bitmap, time);
+            time = TimeTool.getSystemTime();
 
-            List<QRcodeBean> qRcodeBeens = dbManagerLH.select();
-            if(qRcodeBeens!= null&& qRcodeBeens.size() != 0){
-                dbManagerLH.update(bitmap,time);
-            }else {
-                dbManagerLH.add(bitmap,time);
-            }
+
+                qR = QRcodeTool.getQRcode(getMsg(time),600);
+
+
+                requestHttpDb();
+
+                DialogTool.showDialog(this,R.layout.dialog_qr,qR, time);
+
+                List<QRcodeBean> qRcodeBeens = dbManagerLH.select();
+                if(qRcodeBeens!= null&& qRcodeBeens.size() != 0){
+                    dbManagerLH.update(qR,time);
+                }else {
+                    dbManagerLH.add(qR,time);
+                }
 
 
         } catch (WriterException e) {
@@ -181,22 +374,42 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void saveData(int status) {
+        Message message = Message.obtain();
+        message.what = Config.SAVE_HISTORY;
+        message.obj = new OrderBean(order,startName,endName,time,qR,termId,status,startTime,
+                endTime,generatePictureTime);
+        L.d("Config.SAVE_STATUS_SUCCESS:"+Config.SAVE_STATUS_ERROR);
+        dataHandler.sendMessageDelayed(message,1);
+
+
+
+    }
+
+    private void requestHttpDb() {
+        Map<String,Object> map = new WeakHashMap<>();
+        map.put("orderNo",order);
+        map.put("driverId",termId);
+        map.put("startAddress",startName);
+        map.put("startTime",startTime);
+        map.put("endAddress",endName);
+        map.put("endTime",endTime);
+        map.put("generatePictureTime",generatePictureTime);
+        map.put("permission",0);
+        map.put("pictureStr", BitmapAndStringUtils.convertIconToString(qR));
+
+        postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
+    }
+
     @Override
     public void onClick(View view) {
         /**
          * 设置edittext 可编辑和不可编辑
          */
         switch (view.getId()){
-            case R.id.start:
-//                editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                editText.setEnabled(false);
-                Toast.makeText(this,"start",Toast.LENGTH_LONG).show();
-                break;
-            case R.id.end:
-//                editText.setInputType(InputType.TYPE_NULL);
-                editText.setEnabled(true);
-                Toast.makeText(this,"end",Toast.LENGTH_LONG).show();
-                break;
+
         }
     }
+
+
 }

@@ -7,10 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,7 +23,10 @@ import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.sy.hzgps.request.PostRequest;
+import com.sy.hzgps.tool.Server;
 import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
 import com.sy.hzgps.tool.qrcode.RGBLuminanceSource;
 import com.zxing.activity.CaptureActivity;
 import com.zxing.encoding.EncodingHandler;
@@ -28,20 +34,48 @@ import com.zxing.encoding.EncodingHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.BreakIterator;
 import java.util.Hashtable;
 
 public class QRCodeActivity extends BaseActivity {
     private ImageView imageView ,SDimg;
     private static final int SELECT_PIC = 0;
     private static final int SCAN_PIC = 1;
-
+    private EditText editText;
     private String path="/sdcard/erWeiMa.JPEG";
+    private PostRequest postRequest;
+    long imei;
+    private Handler rqHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case Config.OUT_TIME:
+                    if(msg.arg1 == Config.RESULT_SUCCESS){
+                        T.showToast(QRCodeActivity.this,msg.obj.toString());
+                    }else{
+                        T.showToast(QRCodeActivity.this,"失败原因:"+msg.obj.toString());
+                    }
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
         imageView = (ImageView) findViewById(R.id.erweima);
         SDimg = (ImageView) findViewById(R.id.sd_erweima);
+        editText = findView(R.id.imei);
+
+        postRequest =  new PostRequest(QRCodeActivity.this,rqHandler);
+    }
+
+    public void submint(View v){
+        if(imei!= 0.0){
+            postRequest.TestSetDb(Server.Server+Server.TestSetDb,imei,Config.OUT_TIME);
+        }else{
+            T.showToast(QRCodeActivity.this,"不能为空");
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -275,8 +309,22 @@ public class QRCodeActivity extends BaseActivity {
                     break;
                 case SCAN_PIC:
                     String resultq = data.getExtras().getString("result");
-                    Toast.makeText(QRCodeActivity.this,"解析结果：SCAN_PIC" + resultq, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(QRCodeActivity.this,"解析结果：SCAN_PIC" + resultq, Toast.LENGTH_LONG).show();
                     Log.d("lhh", "onActivityResult  SCAN_PIC: "+resultq.toString());
+
+                    editText.setText(resultq);
+
+                    String msg = editText.getText().toString().trim();
+
+                    try {
+                        imei = Long.parseLong(msg);
+                    }catch (NumberFormatException e){
+                        T.showToast(QRCodeActivity.this,"错误");
+                        }
+
+
+
+
                     break;
 
                 default:

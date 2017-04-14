@@ -19,11 +19,26 @@ public class DBHelperLH extends SQLiteOpenHelper {
             "img BLOB," +
             "time text)";
 
+    private static final String CREATE_HISTORY = "create table history(" +
+            "id integer primary key autoincrement," +
+            "termId Integer," +
+            "orderNumble text," +
+            "startName text," +
+            "endName text," +
+            "qR BLOB," +
+            "startTime text," +
+            "endTime text," +
+            "generatePictureTime text," +
+            "status Integer,"+
+            "time text)";
+
+
     private Context mContext;
 
     public DBHelperLH(Context context) {
         super(context, "Img.db", null, 1);
         mContext = context;
+
     }
 
 
@@ -34,6 +49,7 @@ public class DBHelperLH extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_IMG);
+        db.execSQL(CREATE_HISTORY);
         L.d("dataBase create susscess!");
     }
 

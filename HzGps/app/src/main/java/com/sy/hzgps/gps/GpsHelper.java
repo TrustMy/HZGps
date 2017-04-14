@@ -27,6 +27,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.sy.hzgps.Config;
+import com.sy.hzgps.MainActivity;
+import com.sy.hzgps.bean.ShowGpsBean;
 import com.sy.hzgps.tool.sy.EngineStatus;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.message.CommonMessage;
@@ -94,6 +97,7 @@ public class GpsHelper implements Runnable {
         return handler;
     }
 
+    public static Handler mainHandler;
 
     /**
      * 初始化
@@ -103,12 +107,13 @@ public class GpsHelper implements Runnable {
 
         logger.info("GpsHelper init");
 
+
         handler = new GpsHandler(this);
 
         // 读取超速报警阈值
         SharedPreferences prefs = context.getSharedPreferences("CommParams", Context.MODE_PRIVATE);
 
-        maxSpeed = prefs.getInt("maxSpeed", 60);
+        maxSpeed = prefs.getInt("maxSpeed", 200);
 
         SharedPreferences.Editor editor = prefs.edit();
 
@@ -160,6 +165,16 @@ public class GpsHelper implements Runnable {
                 // GPS状态为暂停服务时
                 case LocationProvider.TEMPORARILY_UNAVAILABLE:
                     logger.info("当前GPS状态为暂停服务状态");
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     gpsLocation = locationMgr.getLastKnownLocation(gpsProvider);
                     gpsFixed = false;
                     Log.i("lh", "onStatusChanged: GPS 暂停服务状态");
@@ -194,6 +209,16 @@ public class GpsHelper implements Runnable {
                 gpsFixed = true;
 
             } else {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 gpsLocation = locationMgr.getLastKnownLocation(gpsProvider);
                 gpsFixed = false;
                 Log.i("lh", "onLocationChanged: location ＝＝ null");
@@ -231,12 +256,13 @@ public class GpsHelper implements Runnable {
 
                     alarmMessage.setEngineStatus(EngineStatus.ACC_ON.value());
 
-
+                    /*
                     //播放报警信息
                     mp.start();
                     Num++;
                     isOverSpeed = true;
                     chaosu = 0;
+                    */
                     data.putSerializable("location", alarmMessage);
 
                     Message message = Message.obtain();
@@ -275,7 +301,7 @@ public class GpsHelper implements Runnable {
                 lrpMessage.setGpsSpeed(speed);
                 lrpMessage.setBearing(gpsLocation.getBearing());
 
-                Toast.makeText(context,"当前坐标"+gpsLocation.getLatitude()+"|"+gpsLocation.getLongitude(),Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
 
                 lrpMessage.setEngineStatus(EngineStatus.ACC_ON.value());
 
@@ -292,7 +318,7 @@ public class GpsHelper implements Runnable {
 
 
             }
-            Toast.makeText(context,"当前坐标"+gpsLocation.getLatitude()+"|"+gpsLocation.getLongitude(),Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
 
             //TODO
             // 补充音乐播放、发送广播给Activity等操作
@@ -309,6 +335,11 @@ public class GpsHelper implements Runnable {
 //            context.sendBroadcast(intents);
 
 
+            Message message = new Message();
+            message.what = Config.GPS;
+            message.obj = new ShowGpsBean(location.getLatitude(),location.getLongitude()
+            ,speed,isOverSpeed);
+            mainHandler.sendMessage(message);
         }
     };
 
@@ -357,6 +388,16 @@ public class GpsHelper implements Runnable {
             logger.info("start GPS listening");
 
 
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             locationMgr.requestLocationUpdates(gpsProvider, 2000, 0, locationListener);
 
             //locationMgr.addNmeaListener(nmeaListener);
@@ -367,7 +408,6 @@ public class GpsHelper implements Runnable {
 
         }
     }
-
 
 
     /**
@@ -391,6 +431,16 @@ public class GpsHelper implements Runnable {
 
             logger.info("stop GPS listening");
 
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             locationMgr.removeUpdates(locationListener);
             //locationMgr.removeNmeaListener(nmeaListener);
 
