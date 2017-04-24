@@ -19,4 +19,12 @@ public class TimeTool {
         return    System.currentTimeMillis();
     }
 
+    public String getGPSTime(long  time)
+    {
+        L.d("time:"+time);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dateTime = new Date(time);//获取当前时间
+        String GPSTime = formatter.format(dateTime);
+        return GPSTime;
+    }
 }

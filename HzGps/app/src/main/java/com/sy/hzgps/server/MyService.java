@@ -95,8 +95,13 @@ public class MyService extends Service {
 
     }
 
+
+
+
+
     @Override
     public IBinder onBind(Intent intent) {
+        L.d("onBind");
         // TODO: Return the communication channel to the service.
         //throw new UnsupportedOperationException("Not yet implemented");
 
@@ -106,7 +111,7 @@ public class MyService extends Service {
 
     @Override
     public void onDestroy() {
-
+        L.d("onDestroy");
         //logger.info("Service Destroyed ..........................");
 
         gpsHandler.sendEmptyMessage(CommonMessage.MSG_STOP_GPS_LISTENING);
@@ -116,7 +121,7 @@ public class MyService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-
+        L.d("onUnbind");
 
         //logger.info("Service Unbinded .............................");
 
@@ -126,11 +131,13 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
+        L.d("onStartCommand");
 
         return 0;
 
     }
+
+
 
     public class MsgBinder extends Binder {
 

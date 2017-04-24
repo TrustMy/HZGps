@@ -76,6 +76,8 @@ public class HistoryRecordActivity extends BaseActivity {
         historyRecordAdapter.click = new HistoryrecordAdapter.Click() {
             @Override
             public void click(View v, OrderBean orderBean) {
+                T.showToast(HistoryRecordActivity.this,"订单提交中...");
+
                 Map<String,Object> map = new WeakHashMap<>();
                 order = orderBean.getOrder();
                 map.put("orderNo",orderBean.getOrder());

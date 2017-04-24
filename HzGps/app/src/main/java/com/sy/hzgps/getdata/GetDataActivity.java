@@ -90,6 +90,7 @@ public class GetDataActivity extends BaseActivity   {
             @Override
             public void click(View v, OrderBean orderBean) {
 //                T.showToast(GetDataActivity.this,"点击了:"+orderBean.getOrder());
+                T.showToast(GetDataActivity.this,"提交订单中...");
 
                 Map<String,Object> map = new WeakHashMap<>();
                 order = orderBean.getOrder();

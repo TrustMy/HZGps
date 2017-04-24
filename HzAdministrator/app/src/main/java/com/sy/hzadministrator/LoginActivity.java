@@ -1,10 +1,14 @@
 package com.sy.hzadministrator;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
 
@@ -49,6 +53,16 @@ public class LoginActivity extends BaseActivity {
 
     private void init() {
         postRequest = new PostRequest(LoginActivity.this,logHandler);
+
+        quanxian();
+    }
+
+    private void quanxian() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            //申请WRITE_EXTERNAL_STORAGE权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                    1);}
     }
 
     private void initView() {
@@ -62,6 +76,7 @@ public class LoginActivity extends BaseActivity {
 
     public void toMain(View v)
     {
+        T.showToast(LoginActivity.this,"登录中...");
         String temId = termIdEd.getText().toString().trim();
         String pwd = pwdEd.getText().toString().trim();
 

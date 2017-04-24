@@ -30,6 +30,9 @@ import android.widget.Toast;
 import com.sy.hzgps.Config;
 import com.sy.hzgps.MainActivity;
 import com.sy.hzgps.bean.ShowGpsBean;
+import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
+import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.sy.EngineStatus;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.message.CommonMessage;
@@ -226,7 +229,9 @@ public class GpsHelper implements Runnable {
 
             Bundle data = new Bundle();
             float speed = gpsLocation.getSpeed() * 3.6f;   //转成 公里/时
-            Log.v("lhh", "maxSpeed" + maxSpeed + "当前速度:" + speed);
+
+
+            Log.v("lhh", "maxSpeed" + maxSpeed + "当前速度:" + speed+"|time:"+location.getTime()+"|String:"+new TimeTool().getGPSTime(location.getTime()));
             ++zhengchang;
 
 
@@ -293,6 +298,8 @@ public class GpsHelper implements Runnable {
 
                 lrpMessage.setGpsTime(System.currentTimeMillis() - 18000);
 
+                String whenTime = new TimeTool().getGPSTime(System.currentTimeMillis() - 18000);
+                L.d("whenTime:"+whenTime);
 
                 lrpMessage.setFixed(gpsFixed);
                 lrpMessage.setLat(gpsLocation.getLatitude());
@@ -300,8 +307,12 @@ public class GpsHelper implements Runnable {
                 lrpMessage.setAlt(gpsLocation.getAltitude());
                 lrpMessage.setGpsSpeed(speed);
                 lrpMessage.setBearing(gpsLocation.getBearing());
+                lrpMessage.setTimeStamp(gpsLocation.getTime());
 
-                Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
+                String time = new TimeTool().getGPSTime(gpsLocation.getTime());
+                L.d("当前时间:"+time);
+
+//                Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
 
                 lrpMessage.setEngineStatus(EngineStatus.ACC_ON.value());
 
@@ -318,7 +329,9 @@ public class GpsHelper implements Runnable {
 
 
             }
-            Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "当前坐标" + gpsLocation.getLatitude() + "|" + gpsLocation.getLongitude(), Toast.LENGTH_LONG).show();
+
+
 
             //TODO
             // 补充音乐播放、发送广播给Activity等操作

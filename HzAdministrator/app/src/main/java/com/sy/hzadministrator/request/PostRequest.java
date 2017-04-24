@@ -86,9 +86,7 @@ public class PostRequest {
             @Override
             public void onFailure(Call call, IOException e) {
                 L.err("onFailure :"+e.toString());
-                if(e.getCause() .equals(ConnectException.class)){
-                    L.d("ConnectException");
-                }
+
                 Message message = Message.obtain();
                 message.what = type;
                 message.arg1 = Config.RESULT_ERROR;

@@ -33,6 +33,7 @@ import com.sy.hzgps.database.DBHelperLH;
 import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.getdata.GetDataActivity;
 import com.sy.hzgps.gps.GpsHelper;
+import com.sy.hzgps.logregist.LoginActivity;
 import com.sy.hzgps.message.ObdMessage;
 import com.sy.hzgps.request.PostNet;
 import com.sy.hzgps.request.PostRequest;
@@ -58,18 +59,18 @@ import java.util.WeakHashMap;
 public class MainActivity extends BaseActivity {
     private MyService myServer = null;
     private ImageView logo;
-    private  TextView workMsg , gpsMsg,timeTv;
-    private TextView promptTv,promptWorkTv;
+    private TextView workMsg, gpsMsg, timeTv;
+    private TextView promptTv, promptWorkTv;
     private DBHelperLH dbHelperLH;
     private DBManagerLH dbManagerLH;
 
-    private EditText startLocationEd,endLocationEd;
+    private EditText startLocationEd, endLocationEd;
 
-    private ImageButton start,end;
+    private ImageButton start, end;
 
     private static int timeMinute = 0;
 
-    private String startName,endName,time,order,IMEI,termIdstring;
+    private String startName, endName, time, order, IMEI, termIdstring;
 
     private int termId;
 
@@ -79,71 +80,78 @@ public class MainActivity extends BaseActivity {
 
     private PostRequest postRequest;
 
-    private long startTime,endTime,generatePictureTime;
+    private long startTime, endTime, generatePictureTime;
 
-    public  Handler dataHandler = new Handler(){
+    public Handler dataHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case Config.GPS:
-                    if(msg.obj!= null){
-                    DecimalFormat df = new DecimalFormat("#0.0");
-                    ShowGpsBean showGpsBean = (ShowGpsBean) msg.obj;
-                    gpsMsg.setText(df.format(showGpsBean.getSpeed())+"");
+                    if (msg.obj != null) {
+                        DecimalFormat df = new DecimalFormat("#0.0");
+                        ShowGpsBean showGpsBean = (ShowGpsBean) msg.obj;
+                        gpsMsg.setText(df.format(showGpsBean.getSpeed()) + "");
 
-                }
+                    }
                     break;
                 case Config.TIME:
                     timeMinute++;
-                    timeTv.setText(timeMinute+"");
-                    L.d("timeMinute:"+timeMinute);
+                    timeTv.setText(timeMinute + "");
+                    L.d("timeMinute:" + timeMinute);
                     break;
 
                 case Config.SAVE_HISTORY:
                     OrderBean orderBean = (OrderBean) msg.obj;
-                    Map<String,Object> map = new WeakHashMap<>();
-                    map.put("termId",orderBean.getTermId());
-                    map.put("order",orderBean.getOrder());
-                    map.put("startName",orderBean.getStartName());
-                    map.put("endName",orderBean.getEndName());
-                    map.put("qR",orderBean.getqR());
-                    map.put("time",orderBean.getTime());
-                    map.put("startTime",orderBean.getStartTime()+"");
-                    map.put("endTime",orderBean.getEndTime()+"");
-                    map.put("generatePictureTime",orderBean.getGeneratePictureTime()+"");
-                    map.put("status",orderBean.getStatus());
-                    L.d("orderBean.getStatus():"+orderBean.getStatus());
+                    Map<String, Object> map = new WeakHashMap<>();
+                    map.put("termId", orderBean.getTermId());
+                    map.put("order", orderBean.getOrder());
+                    map.put("startName", orderBean.getStartName());
+                    map.put("endName", orderBean.getEndName());
+                    map.put("qR", orderBean.getqR());
+                    map.put("time", orderBean.getTime());
+                    map.put("startTime", orderBean.getStartTime() + "");
+                    map.put("endTime", orderBean.getEndTime() + "");
+                    map.put("generatePictureTime", orderBean.getGeneratePictureTime() + "");
+                    map.put("status", orderBean.getStatus());
+                    L.d("orderBean.getStatus():" + orderBean.getStatus());
                     dbManagerLH.addOrder(map);
                     break;
 
                 case Config.ORDER:
-                    if(msg.arg1 == Config.RESULT_SUCCESS){
+                    if (msg.arg1 == Config.RESULT_SUCCESS) {
+                        T.showToast(MainActivity.this, " 提交订单成功!");
                         saveData(Config.SAVE_STATUS_SUCCESS);
-                    }else{
+                    } else {
                         saveData(Config.SAVE_STATUS_ERROR);
+                        T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
                     }
                     break;
             }
         }
     };
 
-
-    public String getMsg(String time){
-        if(!startName.equals("") && !endName.equals("")){
+    /**
+     * 设置二维码生成的内容
+     *
+     * @param time
+     * @return
+     */
+    public String getMsg(String time) {
+        if (!startName.equals("") && !endName.equals("")) {
             Map<String, Object> map = new WeakHashMap<String, Object>();
-            order = GenerateSequence.generateSequenceNo()+IMEI;
-            map.put("order",order );
-            map.put("termId",termId);
-            map.put("startName",startName);
-            map.put("endName",endName);
-            map.put("time",time);
-            map.put("startTime",startTime+"");
-            map.put("endTime",endTime+"");
-            map.put("generatePictureTime",generatePictureTime+"");
+            order = GenerateSequence.generateSequenceNo() + IMEI;
+            map.put("order", order);
+            map.put("termId", termId);
+            map.put("startName", startName);
+            map.put("endName", endName);
+            map.put("time", time);
+            map.put("startTime", startTime + "");
+            map.put("endTime", endTime + "");
+            map.put("generatePictureTime", generatePictureTime + "");
             JSONObject jsonObject = new JSONObject(map);
 
             return jsonObject.toString();
-        }else{
+        } else {
             return null;
         }
 
@@ -159,26 +167,29 @@ public class MainActivity extends BaseActivity {
         new AndroidCheckVersion(this).checkVersion();
         init();
         initView();
-        if(myServer == null)
-        {
-            bindService(new Intent(MainActivity.this,MyService.class),serviceConnection, Context.BIND_AUTO_CREATE);
+
+        if (myServer == null) {
+            bindService(new Intent(MainActivity.this, MyService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         }
 
         MyService.mainHandler = dataHandler;
         GpsHelper.mainHandler = dataHandler;
 
         pres = MainActivity.this.getSharedPreferences("CommParams", Activity.MODE_PRIVATE);
-        IMEI = pres.getString("terminalId",null);
-        termIdstring = pres.getString("license",null);
+        IMEI = pres.getString("terminalId", null);
+        termIdstring = pres.getString("license", null);
         termId = Integer.parseInt(termIdstring);
-        if(IMEI == null || termIdstring == null){
-            T.showToast(MainActivity.this,"请插入sim卡!或账号为null");
+        if (IMEI == null || termIdstring == null) {
+            T.showToast(MainActivity.this, "请插入sim卡!或账号为null");
         }
 
     }
 
+    /**
+     * 初始化网络操作
+     */
     private void init() {
-        postRequest = new PostRequest(this,dataHandler);
+        postRequest = new PostRequest(this, dataHandler);
     }
 
 
@@ -207,7 +218,7 @@ public class MainActivity extends BaseActivity {
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            myServer = ((MyService.MsgBinder)iBinder).getService();
+            myServer = ((MyService.MsgBinder) iBinder).getService();
         }
 
         @Override
@@ -216,35 +227,42 @@ public class MainActivity extends BaseActivity {
         }
     };
 
-
+    /**
+     * 开始工作
+     *
+     * @param v
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public void startGps(View v)
-    {
+    public void startGps(View v) {
         startName = startLocationEd.getText().toString().trim();
         endName = endLocationEd.getText().toString().trim();
-        if(!endName .equals("")&& !startName.equals("")){
+        if (!endName.equals("") && !startName.equals("")) {
 
-        start.setVisibility(View.GONE);
-        end.setVisibility(View.VISIBLE);
+            start.setVisibility(View.GONE);
+            end.setVisibility(View.VISIBLE);
 
-        logo.setImageResource(R.drawable.truck_on);
-        promptTv.setVisibility(View.VISIBLE);
-        promptWorkTv.setVisibility(View.VISIBLE);
+            logo.setImageResource(R.drawable.truck_on);
+            promptTv.setVisibility(View.VISIBLE);
+            promptWorkTv.setVisibility(View.VISIBLE);
 
-        startLocationEd.setEnabled(false);
-        endLocationEd.setEnabled(false);
+            startLocationEd.setEnabled(false);
+            endLocationEd.setEnabled(false);
 
-        myServer.startWorking();
+            myServer.startWorking();
 
-        startTime = TimeTool.getSystemTimeDate();
-        timeTv.setText("0");
-        }else{
-            T.showToast(this,"起点或终点输入有误!");
+            startTime = TimeTool.getSystemTimeDate();
+            timeTv.setText("0");
+        } else {
+            T.showToast(this, "起点或终点输入有误!");
         }
     }
 
-    public void endGps(View v)
-    {
+    /**
+     * 结束
+     *
+     * @param v
+     */
+    public void endGps(View v) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("本次行程结束?");
@@ -286,7 +304,6 @@ public class MainActivity extends BaseActivity {
         timeTv.setText("---------");
 
 
-
     }
 
     @Override
@@ -299,14 +316,19 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         String s = getIntent().getStringExtra("test");
-        if(s != null){
+        if (s != null) {
             workMsg.setText(s);
         }
     }
 
+    /**
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == 1){
+        if (resultCode == 1) {
             String t = data.getStringExtra("startTime");
 
         }
@@ -315,32 +337,36 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    /**
+     * menu
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.main_register:
-                Toast.makeText(this,"注册",Toast.LENGTH_LONG).show();
-
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
             case R.id.main_erweima:
                 List<QRcodeBean> qRcodeBeen = dbManagerLH.select();
 
-                if(qRcodeBeen.size() == 0){
-                   Toast.makeText(this,"未找到二维码,请确认是否生成!",Toast.LENGTH_LONG).show();
-                }else{
+                if (qRcodeBeen.size() == 0) {
+                    Toast.makeText(this, "未找到二维码,请确认是否生成!", Toast.LENGTH_LONG).show();
+                } else {
 //                    test.setImageBitmap(qRcodeBeen.get(0).getBitmap());
-                    DialogTool.showDialog(this,R.layout.dialog_qr,qRcodeBeen.get(0)
-                            .getBitmap(),qRcodeBeen.get(0).getTime());
+                    DialogTool.showDialog(this, R.layout.dialog_qr, qRcodeBeen.get(0)
+                            .getBitmap(), qRcodeBeen.get(0).getTime());
                 }
                 break;
             case R.id.main_getdata:
 //                startActivity(new Intent(MainActivity.this, GetDataActivity.class));
-                startActivityForResult(new Intent(MainActivity.this, GetDataActivity.class),1);
+                startActivityForResult(new Intent(MainActivity.this, GetDataActivity.class), 1);
 
                 break;
 
@@ -348,57 +374,67 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 生成二维码
+     */
     private void setQRcode() {
         try {
             time = TimeTool.getSystemTime();
 
 
-                qR = QRcodeTool.getQRcode(getMsg(time),600);
+            qR = QRcodeTool.getQRcode(getMsg(time), 600);
 
+            T.showToast(MainActivity.this,"提交订单中...");
+            requestHttpDb();
 
-                requestHttpDb();
+            DialogTool.showDialog(this, R.layout.dialog_qr, qR, time);
 
-                DialogTool.showDialog(this,R.layout.dialog_qr,qR, time);
-
-                List<QRcodeBean> qRcodeBeens = dbManagerLH.select();
-                if(qRcodeBeens!= null&& qRcodeBeens.size() != 0){
-                    dbManagerLH.update(qR,time);
-                }else {
-                    dbManagerLH.add(qR,time);
-                }
+            List<QRcodeBean> qRcodeBeens = dbManagerLH.select();
+            if (qRcodeBeens != null && qRcodeBeens.size() != 0) {
+                dbManagerLH.update(qR, time);
+            } else {
+                dbManagerLH.add(qR, time);
+            }
 
 
         } catch (WriterException e) {
             e.printStackTrace();
-            Toast.makeText(this,"二维码生成错误",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "二维码生成错误", Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * 保存数据库
+     *
+     * @param status
+     */
     private void saveData(int status) {
         Message message = Message.obtain();
         message.what = Config.SAVE_HISTORY;
-        message.obj = new OrderBean(order,startName,endName,time,qR,termId,status,startTime,
-                endTime,generatePictureTime);
-        L.d("Config.SAVE_STATUS_SUCCESS:"+Config.SAVE_STATUS_ERROR);
-        dataHandler.sendMessageDelayed(message,1);
-
+        message.obj = new OrderBean(order, startName, endName, time, qR, termId, status, startTime,
+                endTime, generatePictureTime);
+        L.d("Config.SAVE_STATUS_SUCCESS:" + Config.SAVE_STATUS_ERROR);
+        dataHandler.sendMessageDelayed(message, 1);
 
 
     }
 
+    /**
+     * 保存网络数据库
+     */
     private void requestHttpDb() {
-        Map<String,Object> map = new WeakHashMap<>();
-        map.put("orderNo",order);
-        map.put("driverId",termId);
-        map.put("startAddress",startName);
-        map.put("startTime",startTime);
-        map.put("endAddress",endName);
-        map.put("endTime",endTime);
-        map.put("generatePictureTime",generatePictureTime);
-        map.put("permission",0);
+        Map<String, Object> map = new WeakHashMap<>();
+        map.put("orderNo", order);
+        map.put("driverId", termId);
+        map.put("startAddress", startName);
+        map.put("startTime", startTime);
+        map.put("endAddress", endName);
+        map.put("endTime", endTime);
+        map.put("generatePictureTime", generatePictureTime);
+        map.put("permission", 0);
         map.put("pictureStr", BitmapAndStringUtils.convertIconToString(qR));
 
-        postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
+        postRequest.requestOrder(Server.Server + Server.Order, map, Config.ORDER);
     }
 
     @Override
@@ -406,7 +442,7 @@ public class MainActivity extends BaseActivity {
         /**
          * 设置edittext 可编辑和不可编辑
          */
-        switch (view.getId()){
+        switch (view.getId()) {
 
         }
     }

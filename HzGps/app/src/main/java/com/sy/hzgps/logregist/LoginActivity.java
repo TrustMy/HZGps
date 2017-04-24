@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -23,6 +24,7 @@ import com.sy.hzgps.network.ca.CACommHelper;
 import com.sy.hzgps.request.GetRequest;
 import com.sy.hzgps.request.PostRequest;
 import com.sy.hzgps.server.MyService;
+import com.sy.hzgps.tool.PermissionUtils;
 import com.sy.hzgps.tool.lh.AndroidCheckVersion;
 import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.lh.T;
@@ -80,13 +82,13 @@ public class LoginActivity extends BaseActivity {
 
 
         AndroidCheckVersion  androidVersion =new AndroidCheckVersion(this);
-        androidVersion.checkVersion();
+//        androidVersion.checkVersion();
         if(androidVersion.isLacksOfPermission(AndroidCheckVersion.PERMISSION[0])){
-
+            L.d("6.0");
+            init();
         }
 
         CACommHelper.loginHandler = handler;
-
 
         initView();
 
@@ -96,6 +98,12 @@ public class LoginActivity extends BaseActivity {
 
             bindService(intent, conn, Context.BIND_AUTO_CREATE);
         }
+
+    }
+
+    private void init() {
+        PermissionUtils.requestMultiPermissions(this,mPermissionGrant);
+
     }
 
     private void initView() {
@@ -109,10 +117,13 @@ public class LoginActivity extends BaseActivity {
 
     public void toMain(View v)
     {
+
+
+        T.showToast(LoginActivity.this,"登录中...");
         String temId = termIdEd.getText().toString().trim();
         String pwd = pwdEd.getText().toString().trim();
 
-        if(!temId.equals("") && !pwd.equals("")){
+        if(!temId.equals("") && !pwd.equals("") && myService!= null){
             myService.setReadyToRegister();
             String terminalId = null;
             for( int i = 0; i < 10 && terminalId == null; i++ ) {
@@ -128,6 +139,8 @@ public class LoginActivity extends BaseActivity {
             }
 
             myService.registerToServer(temId,terminalId);
+        }else {
+            T.showToast(LoginActivity.this,"账号或密码有误!");
         }
 
 
@@ -140,5 +153,18 @@ public class LoginActivity extends BaseActivity {
     protected void onDestroy() {
         unbindService(conn);
         super.onDestroy();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (myService == null) {
+
+            Intent intent = new Intent(LoginActivity.this, MyService.class);
+
+            bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        }
+        L.d("permissions:"+permissions.toString()+"|requestCode:"+requestCode+"|grantResults:"+grantResults.toString());
     }
 }
