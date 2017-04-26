@@ -150,11 +150,12 @@ public class BitmapAndStringUtils {
                     e.printStackTrace();
                 }
             }
-
             L.d("onActivityResult: bitmap:"+bitmap.toString()
                     +"|bitmap2 大小:"+(bitmap.getByteCount() / 1024 )+"KB");
 
-            L.d("tupian :"+BitmapAndStringUtils.convertIconToString(bitmap));
+            String img = BitmapAndStringUtils.convertIconToString(bitmap);
+
+                    L.d("String img :"+(img.getBytes().length / 1024) + "kb");
 
 
 

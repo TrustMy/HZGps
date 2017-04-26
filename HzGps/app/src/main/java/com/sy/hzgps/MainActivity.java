@@ -131,6 +131,7 @@ public class MainActivity extends BaseActivity {
                     map.put("endTime", orderBean.getEndTime() + "");
                     map.put("generatePictureTime", orderBean.getGeneratePictureTime() + "");
                     map.put("status", orderBean.getStatus());
+                    map.put("orderPhotoBit",orderBean.getOrderPhotoBit());
                     L.d("orderBean.getStatus():" + orderBean.getStatus());
                     dbManagerLH.addOrder(map);
                     break;
@@ -281,11 +282,11 @@ public class MainActivity extends BaseActivity {
             promptWorkTv.setVisibility(View.VISIBLE);
 
             startLocationEd.setEnabled(false);
+            endLocationEd.setText("");
             endNameEdLayout.setVisibility(View.GONE);
 //            endLocationEd.setEnabled(false);
 
             myServer.startWorking();
-
 
             timeTv.setText("0");
 
@@ -416,8 +417,14 @@ public class MainActivity extends BaseActivity {
                         flieName,ApkConfig.fliePath);
                 if(ApkConfig.PhotoBitMap != null){
 //                    logo.setImageBitmap(ApkConfig.PhotoBitMap);
+                    String time;
+                    if(ApkConfig.endTime == 0){
+                        time = TimeTool.getSystemTime();
+                    }else{
+                        time = TimeTool.getGPSTime(ApkConfig.endTime);
+                    }
                     DialogTool.showPhotoDialog(MainActivity.this,R.layout.dialog_photo,ApkConfig.
-                            PhotoBitMap, "2017.4.25");
+                            PhotoBitMap, time);
                     DialogTool.phoneOnClick = new DialogTool.PhoneOnClick() {
                         @Override
                         public void onClick(View v) {
@@ -531,8 +538,11 @@ public class MainActivity extends BaseActivity {
 
         Message message = Message.obtain();
         message.what = Config.SAVE_HISTORY;
+        L.d("photo bit :"+BitmapAndStringUtils.
+                convertIconToString(ApkConfig.PhotoBitMap));
         message.obj = new OrderBean(order, startName, endName, time, qR, termId, status,
-                startTime, endTime, genratePictureTime);
+                startTime, endTime, genratePictureTime,BitmapAndStringUtils.
+                convertIconToString(ApkConfig.PhotoBitMap));
         L.d("Config.SAVE_STATUS_SUCCESS:" + Config.SAVE_STATUS_ERROR);
         dataHandler.sendMessageDelayed(message, 1);
 

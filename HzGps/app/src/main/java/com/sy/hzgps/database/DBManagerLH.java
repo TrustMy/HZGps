@@ -105,6 +105,7 @@ public class DBManagerLH {
             contentValues.put("startTime",(String)map.get("startTime"));
             contentValues.put("endTime",(String)map.get("endTime"));
             contentValues.put("generatePictureTime",(String)map.get("generatePictureTime"));
+            contentValues.put("orderPhotoBit", (String) map.get("orderPhotoBit"));
 
             L.d("map.get(\"status\"):"+(Integer)map.get("status"));
             contentValues.put("status",(Integer) map.get("status"));
@@ -124,15 +125,18 @@ public class DBManagerLH {
         if(cursor.moveToFirst()){
             do {
                 Bitmap bitmap = null;
+                String orderPhotoBit = null;
                 String time = cursor.getString(cursor.getColumnIndex("time"));
                 int termId = cursor.getInt(cursor.getColumnIndex("termId"));
                 String order = cursor.getString(cursor.getColumnIndex("orderNumble"));
                 String startName = cursor.getString(cursor.getColumnIndex("startName"));
                 String endName = cursor.getString(cursor.getColumnIndex("endName"));
+
                 int status = cursor.getInt(cursor.getColumnIndex("status"));
                 if(status != Config.SAVE_STATUS_SUCCESS){
                     byte[] bmp = cursor.getBlob(cursor.getColumnIndex("qR"));
                     bitmap = BitmapFactory.decodeByteArray(bmp,0,bmp.length);
+                    orderPhotoBit = cursor.getString(cursor.getColumnIndex("orderPhotoBit"));
                 }
                 long startTime =  Long.
                         parseLong(cursor.getString(cursor.getColumnIndex("startTime")));
@@ -142,7 +146,7 @@ public class DBManagerLH {
                         parseLong(cursor.getString(cursor.getColumnIndex("generatePictureTime")));
                 L.d("status selectOrder:"+status);
                 ml.add(new OrderBean(order,startName,endName,time,bitmap,termId,status,startTime,
-                        endTime,generatePictureTime));
+                        endTime,generatePictureTime,orderPhotoBit));
             }while (cursor.moveToNext());
         }
         cursor.close();
@@ -158,8 +162,34 @@ public class DBManagerLH {
                     new String[]{order});
             contentValues.clear();
             L.d("updateOrder success!");
+
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 通过订单号查 二维码
+     * @param order
+     * @return
+     */
+    public Bitmap selectFirstDate(String order){
+        String selection = "orderNumble=?" ;
+        String[] selectionArgs = new  String[]{ order };
+        Bitmap bitmap = null;
+        if(!order.equals("")){
+            Cursor cursor = dbWrit.query("history",null,selection,selectionArgs,null,null,null);
+            if(cursor.moveToFirst()){
+                do {
+                    byte[] bmp = cursor.getBlob(cursor.getColumnIndex("qR"));
+                    bitmap = BitmapFactory.decodeByteArray(bmp,0,bmp.length);
+                }while (cursor.moveToNext());
+            }
+            cursor.close();
+            return bitmap;
+        }else{
+            return null;
+        }
     }
 }

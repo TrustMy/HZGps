@@ -1,12 +1,15 @@
 package com.sy.hzgps.getdata;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +18,8 @@ import com.sy.hzgps.MainActivity;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.R;
 import com.sy.hzgps.bean.OrderBean;
+import com.sy.hzgps.database.DBManagerLH;
+import com.sy.hzgps.tool.lh.BitmapAndStringUtils;
 import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.lh.T;
 
@@ -26,9 +31,14 @@ import java.util.List;
 
 public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecyclerAdapter.ViewHolder> {
     private List<OrderBean> ml ;
-
+    private DBManagerLH dbManagerLH;
     public void setMl(List<OrderBean> ml) {
         this.ml = ml;
+    }
+    private Context context;
+    public GetDataRecyclerAdapter(Context context) {
+        this.context = context;
+        dbManagerLH = new DBManagerLH(context);
     }
 
     @Override
@@ -60,7 +70,13 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
             @Override
             public void onClick(View view) {
                 int pos = viewHolder.getAdapterPosition();
-                t.click(view,ml.get(pos));
+                Bitmap bitmap = dbManagerLH.selectFirstDate(ml.get(pos).getOrder());
+                if(bitmap != null){
+                    viewHolder.test.setImageBitmap(bitmap);
+                }else{
+                    T.showToast(context,"未找到图片或订单错误!");
+                }
+//                t.click(view,ml.get(pos));
             }
         });
         return viewHolder;
@@ -81,6 +97,7 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
             holder.submitBtn.setVisibility(View.GONE);
             holder.foundBtn.setVisibility(View.VISIBLE);
         }else {
+
             holder.statusTv.setTextColor(Color.parseColor("#ff0000"));
             holder.statusTv.setText("提交失败");
             holder.submitBtn.setVisibility(View.VISIBLE);
@@ -96,10 +113,12 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView termIdTv,orderTv,startTv,endTv,timeTv,statusTv;
         Button submitBtn,foundBtn;
+        ImageView test;
         View views;
         public ViewHolder(View itemView) {
             super(itemView);
             views = itemView;
+            test = (ImageView) itemView.findViewById(R.id.test_img);
             foundBtn = (Button) itemView.findViewById(R.id.get_recycler_item_found_qr);
             termIdTv = (TextView) itemView.findViewById(R.id.get_recycler_item_termid);
             orderTv = (TextView) itemView.findViewById(R.id.get_recycler_item_order);

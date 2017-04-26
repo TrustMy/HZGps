@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
  * Created by Trust on 2017/4/12.
  */
 public class OrderBean {
-    private String order,startName,endName,time;
+    private String order,startName,endName,time,orderPhotoBit;
     private Bitmap qR;
     private int termId;
     private Integer  status;
@@ -14,8 +14,9 @@ public class OrderBean {
 
     public OrderBean(String order, String startName, String endName, String time, Bitmap qR,
                      int termId ,Integer  status,long startTime,
-                     long endTime,long generatePictureTime) {
+                     long endTime,long generatePictureTime,String orderPhotoBit) {
         this.order = order;
+        this.orderPhotoBit= orderPhotoBit;
         this.startName = startName;
         this.endName = endName;
         this.time = time;
@@ -25,6 +26,14 @@ public class OrderBean {
         this.startTime = startTime;
         this.endTime = endTime;
         this.generatePictureTime = generatePictureTime;
+    }
+
+    public String getOrderPhotoBit() {
+        return orderPhotoBit;
+    }
+
+    public void setOrderPhotoBit(String orderPhotoBit) {
+        this.orderPhotoBit = orderPhotoBit;
     }
 
     public long getStartTime() {
@@ -105,5 +114,11 @@ public class OrderBean {
 
     public void setTermId(int termId) {
         this.termId = termId;
+    }
+
+    @Override
+    public String toString() {
+        return "time:"+time+"|startTime:"+startTime+"|endTime:"+endTime+
+                "|generatePictureTime:"+generatePictureTime;
     }
 }

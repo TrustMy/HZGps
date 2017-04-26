@@ -1,6 +1,7 @@
 package com.sy.hzgps.getdata;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +20,7 @@ import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.request.PostRequest;
 import com.sy.hzgps.tool.Server;
 import com.sy.hzgps.tool.lh.BitmapAndStringUtils;
+import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.lh.RecyclerViewDivider;
 import com.sy.hzgps.tool.lh.T;
 
@@ -79,23 +81,21 @@ public class GetDataActivity extends BaseActivity   {
     private void initView() {
         dbManagerLH = new DBManagerLH(this);
         dataRecyclerView = findView(R.id.getdate_recycler);
-        getDataRecyclerAdapter = new GetDataRecyclerAdapter();
+        getDataRecyclerAdapter = new GetDataRecyclerAdapter(GetDataActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         dataRecyclerView.setLayoutManager(linearLayoutManager);
         dataRecyclerView.setAdapter(getDataRecyclerAdapter);
 
-        dataRecyclerView.addItemDecoration(new RecyclerViewDivider(this, LinearLayoutManager.HORIZONTAL));
+//        dataRecyclerView.addItemDecoration(new RecyclerViewDivider(this, LinearLayoutManager.HORIZONTAL));
         getDataRecyclerAdapter.t = new GetDataRecyclerAdapter.test() {
 
             @Override
             public void click(View v, OrderBean orderBean) {
 
                 switch (v.getId()){
-                    case R.id.get_recycler_item_found_qr:
-                        T.showToast(GetDataActivity.this,"查看二维码");
-                        break;
-                    case R.id.get_recycler_item_submit:
 
+                    case R.id.get_recycler_item_submit:
+                        L.d("orderBean:"+orderBean.getOrderPhotoBit());
                         T.showToast(GetDataActivity.this,"提交订单中...");
 
                         Map<String,Object> map = new WeakHashMap<>();
@@ -110,6 +110,7 @@ public class GetDataActivity extends BaseActivity   {
                         map.put("permission",0);
                         map.put("pictureStr", BitmapAndStringUtils.
                                 convertIconToString(orderBean.getqR()));
+                        map.put("orderPic",orderBean.getOrderPhotoBit());
 
                         postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
                         break;

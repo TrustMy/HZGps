@@ -30,6 +30,7 @@ public class DBHelperLH extends SQLiteOpenHelper {
             "endTime text," +
             "generatePictureTime text," +
             "status Integer,"+
+            "orderPhotoBit text,"+
             "time text)";
 
 

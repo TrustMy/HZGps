@@ -14,4 +14,9 @@
         android:id="@+id/main_getdata"
         />
 
+    <item
+        android:title="规定"
+        android:id="@+id/main_regulations"
+        />
+
 </menu>
