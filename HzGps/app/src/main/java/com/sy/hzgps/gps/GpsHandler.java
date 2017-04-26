@@ -20,26 +20,28 @@ public class GpsHandler extends Handler {
     private static Logger logger = LoggerFactory.getLogger(GpsHandler.class);
 
 
-    private final WeakReference<GpsHelper> thread;
-
-    public GpsHandler(GpsHelper t) {
-        thread = new WeakReference<GpsHelper>(t);
+    private WeakReference<GapGpsHelper> thread;
+    private GapGpsHelper gaoToGps ;
+    public GpsHandler(GapGpsHelper t) {
+//        thread = new WeakReference<GpsHelper>(t);
+//        thread = new WeakReference<GapGpsHelper>((GapGpsHelper) t);
+        thread = new WeakReference<GapGpsHelper>( t);
     }
 
     @Override
     public void handleMessage(Message msg) {
 
-        GpsHelper t = thread.get();
+        GapGpsHelper t = thread.get();
         if (t != null) {
 
             switch (msg.what) {
 
                 case CommonMessage.MSG_START_GPS_LISTENING:
-                    t.startGpsListening();
+                    t.startGps();
                     break;
 
                 case CommonMessage.MSG_STOP_GPS_LISTENING:
-                    t.stopGpsListening();
+                    t.stopGps();
                     break;
 
 

@@ -14,6 +14,8 @@ import android.widget.EditText;
 
 import com.sy.hzadministrator.request.PostRequest;
 
+import java.util.Date;
+
 public class LoginActivity extends BaseActivity {
 
     private EditText termIdEd,pwdEd;
@@ -66,7 +68,9 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView() {
+        Date date = new Date();
 
+        L.d("Year:"+(date.getYear()));
         termIdEd = findView(R.id.loging_phone);
         pwdEd = findView(R.id.loging_pwd);
     }
@@ -79,8 +83,8 @@ public class LoginActivity extends BaseActivity {
         T.showToast(LoginActivity.this,"登录中...");
         String temId = termIdEd.getText().toString().trim();
         String pwd = pwdEd.getText().toString().trim();
-
-        postRequest.loging(Server.Server+Server.Loging,temId,pwd,Config.LOGING);
+        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+//        postRequest.loging(Server.Server+Server.Loging,temId,pwd,Config.LOGING);
 
     }
 

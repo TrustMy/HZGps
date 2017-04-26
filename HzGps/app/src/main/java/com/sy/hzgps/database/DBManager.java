@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.sy.hzgps.tool.lh.L;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,8 @@ public class DBManager {
         values.put(helper.DATA, data);
 
         db.insert(table, nullColumnHack, values);
+
+        L.d("DBManager add  time:"+timeStamp+"|data:"+data.toString());
 
     }
 

@@ -89,23 +89,34 @@ public class GetDataActivity extends BaseActivity   {
 
             @Override
             public void click(View v, OrderBean orderBean) {
-//                T.showToast(GetDataActivity.this,"点击了:"+orderBean.getOrder());
-                T.showToast(GetDataActivity.this,"提交订单中...");
 
-                Map<String,Object> map = new WeakHashMap<>();
-                order = orderBean.getOrder();
-                map.put("orderNo",orderBean.getOrder());
-                map.put("driverId",orderBean.getTermId());
-                map.put("startAddress",orderBean.getStartName());
-                map.put("startTime",orderBean.getStartTime());
-                map.put("endAddress",orderBean.getEndName());
-                map.put("endTime",orderBean.getEndTime());
-                map.put("generatePictureTime",orderBean.getGeneratePictureTime());
-                map.put("permission",0);
-                map.put("pictureStr", BitmapAndStringUtils.
-                        convertIconToString(orderBean.getqR()));
+                switch (v.getId()){
+                    case R.id.get_recycler_item_found_qr:
+                        T.showToast(GetDataActivity.this,"查看二维码");
+                        break;
+                    case R.id.get_recycler_item_submit:
 
-                postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
+                        T.showToast(GetDataActivity.this,"提交订单中...");
+
+                        Map<String,Object> map = new WeakHashMap<>();
+                        order = orderBean.getOrder();
+                        map.put("orderNo",orderBean.getOrder());
+                        map.put("driverId",orderBean.getTermId());
+                        map.put("startAddress",orderBean.getStartName());
+                        map.put("startTime",orderBean.getStartTime());
+                        map.put("endAddress",orderBean.getEndName());
+                        map.put("endTime",orderBean.getEndTime());
+                        map.put("generatePictureTime",orderBean.getGeneratePictureTime());
+                        map.put("permission",0);
+                        map.put("pictureStr", BitmapAndStringUtils.
+                                convertIconToString(orderBean.getqR()));
+
+                        postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
+                        break;
+                }
+
+
+
             }
         };
     }

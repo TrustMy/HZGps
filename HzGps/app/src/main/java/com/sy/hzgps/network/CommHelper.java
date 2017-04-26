@@ -239,7 +239,7 @@ public abstract class CommHelper extends IoHandlerAdapter implements Runnable {
             ObdMessage message = null;
             if (taskQueue.isEmpty()) {
 
-                // 从数据库中读取历史任务
+                // 从数f据库中读取历史任务
                 message = getFromDB();
 
                 if (message != null) {

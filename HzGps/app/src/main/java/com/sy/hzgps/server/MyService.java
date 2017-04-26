@@ -12,8 +12,10 @@ import android.os.Message;
 import android.util.Log;
 
 
+import com.sy.hzgps.ApkConfig;
 import com.sy.hzgps.Config;
 import com.sy.hzgps.MainActivity;
+import com.sy.hzgps.gps.GapGpsHelper;
 import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.sy.EngineStatus;
 import com.sy.hzgps.tool.sy.ServerType;
@@ -43,7 +45,7 @@ public class MyService extends Service {
 
     private Handler commHandler;
 
-    private GpsHelper gpsHelper;
+    private GapGpsHelper gapGpsHelper;
     private Handler gpsHandler;
 
     private boolean IsStopLoading = false;
@@ -76,10 +78,10 @@ public class MyService extends Service {
 
 
         commHelper = new CACommHelper();
-        gpsHelper = new GpsHelper();
+        gapGpsHelper = new GapGpsHelper();
 
         threadPool.execute(commHelper);
-        threadPool.execute(gpsHelper);
+        threadPool.execute(gapGpsHelper);
 
         try {
             Thread.sleep(1000);
@@ -88,10 +90,10 @@ public class MyService extends Service {
         }
 
         commHandler = commHelper.getHandler();
-        gpsHandler = gpsHelper.getHandler();
+        gpsHandler = gapGpsHelper.getHandler();
 
         commHelper.setGpsHandler(gpsHandler);
-        gpsHelper.setCommHandler(commHandler);
+        gapGpsHelper.setCommHandler(commHandler);
 
     }
 
@@ -227,7 +229,7 @@ public class MyService extends Service {
         CALocationReportMessage lrpMessage = new CALocationReportMessage(ObdMessageID.OBD_REPORT, true);
 
         lrpMessage.setGpsTime(System.currentTimeMillis() - 18000);
-
+        L.d("start apk time :"+(System.currentTimeMillis() - 18000));
 
         lrpMessage.setFixed(false);
         lrpMessage.setLat(0);
@@ -251,6 +253,9 @@ public class MyService extends Service {
 
         commHandler.sendMessage(message);
 
+        /**
+         * 每1min发送一次 刷新 ui
+         */
         timeHandler.sendEmptyMessageDelayed(Config.TIME,60*1000);
 
     }
@@ -271,7 +276,7 @@ public class MyService extends Service {
         // 生成 位置汇报 消息
         CALocationReportMessage lrpMessage = new CALocationReportMessage(ObdMessageID.OBD_REPORT, true);
 
-        lrpMessage.setGpsTime(System.currentTimeMillis() - 18000);
+        lrpMessage.setGpsTime(ApkConfig.Time);
 
 
         lrpMessage.setFixed(false);

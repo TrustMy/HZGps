@@ -20,6 +20,11 @@ public class DialogTool {
     static ImageView QRcode;
     static TextView timeTv;
     static View view;
+
+    public static Dialog photoDialog;
+    static ImageView Photo;
+    static View PhotoView;
+    static TextView phototime;
     public DialogTool() {
 
     }
@@ -28,6 +33,14 @@ public class DialogTool {
         void onClick();
     }
 
+
+    /**
+     * 订单dialog
+     * @param context
+     * @param layout
+     * @param bitmap
+     * @param time
+     */
     public static void showDialog(Context context, int layout, Bitmap bitmap,String time){
 
         if(dialog  == null){
@@ -36,14 +49,6 @@ public class DialogTool {
             timeTv = (TextView) view.findViewById(R.id.dialog_time);
             Button button = (Button) view.findViewById(R.id.dialog_btn);
 
-
-        /*
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setView(view);
-        final AlertDialog dialog ;
-        dialog = alertDialog.show();
-        dialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
-        */
             dialog = new Dialog(context,R.style.customDialog);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -61,4 +66,43 @@ public class DialogTool {
         dialog.show();
 
     }
+
+
+    public static void showPhotoDialog(Context context, int layout, Bitmap bitmap,String time){
+        if(photoDialog  == null){
+            PhotoView = LayoutInflater.from(context).inflate(layout,null);
+            Photo = (ImageView) PhotoView.findViewById(R.id.dialog_photo_img);
+            phototime = (TextView) PhotoView.findViewById(R.id.dialog_photo_time);
+            Button determine = (Button) PhotoView.findViewById(R.id.dialog_photo_determine);
+            Button cancel = (Button) PhotoView.findViewById(R.id.dialog_photo_cancel);
+            photoDialog = new Dialog(context,R.style.customDialog);
+            determine.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    phoneOnClick.onClick(v);
+                }
+            });
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    photoDialog.dismiss();
+                }
+            });
+
+
+        }
+        Photo.setImageBitmap(bitmap);
+        phototime.setText("生成时间:\n"+time);
+        photoDialog.setContentView(PhotoView);
+//        dialog.setCancelable(true);
+        photoDialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
+        photoDialog.show();
+    }
+
+    public interface PhoneOnClick {
+        void onClick(View v);
+    }
+
+    public static PhoneOnClick phoneOnClick;
 }

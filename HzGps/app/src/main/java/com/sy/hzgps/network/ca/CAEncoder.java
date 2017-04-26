@@ -3,6 +3,7 @@ package com.sy.hzgps.network.ca;
 
 
 
+import com.sy.hzgps.ApkConfig;
 import com.sy.hzgps.message.GpsMessage;
 import com.sy.hzgps.message.ObdMessage;
 import com.sy.hzgps.message.ObdMessageID;
@@ -14,6 +15,7 @@ import com.sy.hzgps.protocol.SY808MessageHeader;
 import com.sy.hzgps.protocol.SY_0102;
 import com.sy.hzgps.protocol.SY_01AA;
 import com.sy.hzgps.protocol.SY_0200;
+import com.sy.hzgps.tool.lh.L;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
@@ -45,7 +47,7 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 	public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
         //logger.info("--- Msg ProtocolEncoder encode() ---  ");
 		if (message != null && message instanceof ObdMessage) {
-
+			L.d("message:"+message.toString());
 			ObdMessage obdMessage = (ObdMessage) message;
 
 			SY808Message sendMessage = null;
@@ -82,6 +84,10 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 				out.write(buf);
 
 
+				String s = bytesToHexString(value);
+				L.d("data :"+s);
+
+
 				/*
                 // TEST
                 if ( sendMessage.getMessageHeader().getMessageType() == 0x0200 ) {
@@ -99,6 +105,19 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 			}
 		}
 
+	}
+
+
+	public  final String bytesToHexString(byte[] bArray) {
+		StringBuffer sb = new StringBuffer(bArray.length);
+		String sTemp;
+		for (int i = 0; i < bArray.length; i++) {
+			sTemp = Integer.toHexString(0xFF & bArray[i]);
+			if (sTemp.length() < 2)
+				sb.append(0);
+			sb.append(sTemp.toUpperCase());
+		}
+		return sb.toString();
 	}
 
     public void dispose() throws Exception {
@@ -163,8 +182,8 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 
 		GpsMessage gpsMessage = (GpsMessage) obdMessage;
 
-		SY808Message message = new SY808Message();
 
+		SY808Message message = new SY808Message();
 		SY808MessageHeader header = message.getMessageHeader();
 
 		header.setMessageType((short) 0x0200);
@@ -175,11 +194,10 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 
 		SY_0200 body = new SY_0200();
 
-		long timeStamp = gpsMessage.getGpsTime();
 
-		Date date = new Date(timeStamp);
+		Date date = new Date(ApkConfig.Time);
 
-
+		L.d("Year:"+(date.getYear()));
 		body.setYear((byte)(date.getYear()-100));
 		body.setMonth((byte)(date.getMonth()+1));
 		body.setDate((byte)date.getDate());

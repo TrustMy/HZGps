@@ -164,7 +164,7 @@ public class CACommHelper extends CommHelper {
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 
         logger.info("ExceptionCaught");
-        L.d("ExceptionCaught");
+        L.d("ExceptionCaught cause:"+cause+"|session:"+session);
         //session.closeNow();
 
         disConnectFromServer();
@@ -684,11 +684,12 @@ public class CACommHelper extends CommHelper {
 
                     // 0 表示位置汇报成功，4表示报警汇报成功
                     if (replyResult == 0 || replyResult == 4) {
-
+                        L.d("位置汇报成功");
                         logger.info(String.format("0200 Reply, SN = 0x%04x", messageSerialNo));
                         L.d(String.format("0200 Reply, SN = 0x%04x", messageSerialNo));
 
                     } else {
+                        L.d("位置汇报失败");
                         logger.info("---0200 replyResult = " + replyResult );
                         L.d("---0200 replyResult = " + replyResult);
                     }

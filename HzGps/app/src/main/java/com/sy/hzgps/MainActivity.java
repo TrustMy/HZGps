@@ -9,12 +9,19 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +40,7 @@ import com.sy.hzgps.bean.ShowGpsBean;
 import com.sy.hzgps.database.DBHelperLH;
 import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.getdata.GetDataActivity;
+import com.sy.hzgps.gps.GapGpsHelper;
 import com.sy.hzgps.gps.GpsHelper;
 import com.sy.hzgps.logregist.LoginActivity;
 import com.sy.hzgps.message.ObdMessage;
@@ -50,6 +59,13 @@ import com.sy.hzgps.tool.qrcode.QRcodeTool;
 
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +82,8 @@ public class MainActivity extends BaseActivity {
 
     private EditText startLocationEd, endLocationEd;
 
+    private LinearLayout endNameEdLayout;
+
     private ImageButton start, end;
 
     private static int timeMinute = 0;
@@ -80,7 +98,7 @@ public class MainActivity extends BaseActivity {
 
     private PostRequest postRequest;
 
-    private long startTime, endTime, generatePictureTime;
+
 
     public Handler dataHandler = new Handler() {
         @Override
@@ -145,13 +163,14 @@ public class MainActivity extends BaseActivity {
             map.put("startName", startName);
             map.put("endName", endName);
             map.put("time", time);
-            map.put("startTime", startTime + "");
-            map.put("endTime", endTime + "");
-            map.put("generatePictureTime", generatePictureTime + "");
+            map.put("startTime", ApkConfig.startTime + "");
+            map.put("endTime", ApkConfig.endTime + "");
+            map.put("generatePictureTime", ApkConfig.generatePictureTime + "");
             JSONObject jsonObject = new JSONObject(map);
-
+            L.d("retunr json");
             return jsonObject.toString();
         } else {
+            L.d("null");
             return null;
         }
 
@@ -173,7 +192,7 @@ public class MainActivity extends BaseActivity {
         }
 
         MyService.mainHandler = dataHandler;
-        GpsHelper.mainHandler = dataHandler;
+        GapGpsHelper.mainHandler = dataHandler;
 
         pres = MainActivity.this.getSharedPreferences("CommParams", Activity.MODE_PRIVATE);
         IMEI = pres.getString("terminalId", null);
@@ -213,6 +232,8 @@ public class MainActivity extends BaseActivity {
         promptWorkTv = findView(R.id.main_prompt_work);
 
         timeTv = findView(R.id.main_time);
+
+        endNameEdLayout = findView(R.id.main_end_location_ed_layout);
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
@@ -235,8 +256,22 @@ public class MainActivity extends BaseActivity {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void startGps(View v) {
         startName = startLocationEd.getText().toString().trim();
-        endName = endLocationEd.getText().toString().trim();
-        if (!endName.equals("") && !startName.equals("")) {
+        if(!startName.equals("")){
+            getPhoto();
+        }else{
+            T.showToast(MainActivity.this,"请输入起点!");
+        }
+
+
+
+    }
+
+    /**
+     *   开始处理gps数据
+     */
+    private void startGps() {
+
+
 
             start.setVisibility(View.GONE);
             end.setVisibility(View.VISIBLE);
@@ -246,15 +281,14 @@ public class MainActivity extends BaseActivity {
             promptWorkTv.setVisibility(View.VISIBLE);
 
             startLocationEd.setEnabled(false);
-            endLocationEd.setEnabled(false);
+            endNameEdLayout.setVisibility(View.GONE);
+//            endLocationEd.setEnabled(false);
 
             myServer.startWorking();
 
-            startTime = TimeTool.getSystemTimeDate();
+
             timeTv.setText("0");
-        } else {
-            T.showToast(this, "起点或终点输入有误!");
-        }
+
     }
 
     /**
@@ -263,26 +297,32 @@ public class MainActivity extends BaseActivity {
      * @param v
      */
     public void endGps(View v) {
+        endNameEdLayout.setVisibility(View.VISIBLE);
+        endName = endLocationEd.getText().toString().trim();
+        if(!endName.equals("")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("本次行程结束?");
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("本次行程结束?");
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                endTime = TimeTool.getSystemTimeDate();
-                generatePictureTime = endTime;
-                closeGps();
-            }
-        });
+                    closeGps();
+                }
+            });
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }else{
+            T.showToast(MainActivity.this,"请输入终点,在点击结束!");
+        }
+
+
 
     }
 
@@ -297,14 +337,44 @@ public class MainActivity extends BaseActivity {
         startLocationEd.setEnabled(true);
         endLocationEd.setEnabled(true);
 
-        myServer.stopWorking();
+
         setQRcode();
+        myServer.stopWorking();
 
         timeMinute = 0;
         timeTv.setText("---------");
 
 
     }
+
+    public void getPhoto(){
+        String state = Environment.getExternalStorageState(); //拿到sdcard是否可用的状态码
+        if (state.equals(Environment.MEDIA_MOUNTED)){   //如果可用
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Uri imageUri = Uri.fromFile(getImgFile());
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            startActivityForResult(intent,ApkConfig.PhoneCode);
+        }else {
+            Toast.makeText(MainActivity.this,"sdcard不可用",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 设置文件存储路径，返回一个file
+     * @return
+     */
+    private File getImgFile(){
+        File file = new File(ApkConfig.fliePath);
+        if (!file.exists()){
+            //要点！
+            file.mkdirs();
+        }
+        File imgFile = new File(file,ApkConfig.flieName+".jpg");
+        return imgFile;
+
+    }
+
+
 
     @Override
     protected void onDestroy() {
@@ -328,14 +398,48 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == 1) {
-            String t = data.getStringExtra("startTime");
+//        if (resultCode == 1) {
+//            String t = data.getStringExtra("startTime");
+//
+//        }
+
+        if (getImgFile().exists() && requestCode == ApkConfig.PhoneCode) {
+
+                /*
+                String path = getImgFile().getPath();
+                fis = new FileInputStream(path);
+                Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                L.d("onActivityResult: bitmap1:"+bitmap.toString()
+                        +"|bitmap 大小:"+(bitmap.getByteCount() / 1024 / 1024)+"m");
+                */
+                ApkConfig.PhotoBitMap = BitmapAndStringUtils.bitmapCompression(ApkConfig.
+                        flieName,ApkConfig.fliePath);
+                if(ApkConfig.PhotoBitMap != null){
+//                    logo.setImageBitmap(ApkConfig.PhotoBitMap);
+                    DialogTool.showPhotoDialog(MainActivity.this,R.layout.dialog_photo,ApkConfig.
+                            PhotoBitMap, "2017.4.25");
+                    DialogTool.phoneOnClick = new DialogTool.PhoneOnClick() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogTool.photoDialog.dismiss();
+                            startGps();
+                        }
+                    };
+                }else{
+                    L.err("photoBitmap  is  null!");
+                }
+
+
 
         }
+
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
+
+
+                @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -379,7 +483,11 @@ public class MainActivity extends BaseActivity {
      */
     private void setQRcode() {
         try {
-            time = TimeTool.getSystemTime();
+            if(ApkConfig.endTime == 0){
+                time = TimeTool.getSystemTime();
+            }else{
+                time = TimeTool.getGPSTime(ApkConfig.endTime);
+            }
 
 
             qR = QRcodeTool.getQRcode(getMsg(time), 600);
@@ -409,10 +517,22 @@ public class MainActivity extends BaseActivity {
      * @param status
      */
     private void saveData(int status) {
+        long startTime , endTime , genratePictureTime;
+        if(ApkConfig.startTime == 0 && ApkConfig.generatePictureTime == 0
+                && ApkConfig.endTime == 0){
+            startTime = TimeTool.getSystemTimeDate();
+            endTime = startTime;
+            genratePictureTime = endTime;
+        }else{
+            startTime = ApkConfig.startTime;
+            endTime = ApkConfig.endTime;
+            genratePictureTime = ApkConfig.generatePictureTime;
+        }
+
         Message message = Message.obtain();
         message.what = Config.SAVE_HISTORY;
-        message.obj = new OrderBean(order, startName, endName, time, qR, termId, status, startTime,
-                endTime, generatePictureTime);
+        message.obj = new OrderBean(order, startName, endName, time, qR, termId, status,
+                startTime, endTime, genratePictureTime);
         L.d("Config.SAVE_STATUS_SUCCESS:" + Config.SAVE_STATUS_ERROR);
         dataHandler.sendMessageDelayed(message, 1);
 
@@ -427,12 +547,25 @@ public class MainActivity extends BaseActivity {
         map.put("orderNo", order);
         map.put("driverId", termId);
         map.put("startAddress", startName);
+        long startTime , endTime , genratePictureTime;
+        if(ApkConfig.startTime == 0 && ApkConfig.generatePictureTime == 0
+                && ApkConfig.endTime == 0){
+            startTime = TimeTool.getSystemTimeDate();
+            endTime = startTime;
+            genratePictureTime = endTime;
+        }else{
+            startTime = ApkConfig.startTime;
+            endTime = ApkConfig.endTime;
+            genratePictureTime = ApkConfig.generatePictureTime;
+        }
+
         map.put("startTime", startTime);
         map.put("endAddress", endName);
         map.put("endTime", endTime);
-        map.put("generatePictureTime", generatePictureTime);
+        map.put("generatePictureTime", genratePictureTime);
         map.put("permission", 0);
         map.put("pictureStr", BitmapAndStringUtils.convertIconToString(qR));
+        map.put("orderPic",BitmapAndStringUtils.convertIconToString(ApkConfig.PhotoBitMap));
 
         postRequest.requestOrder(Server.Server + Server.Order, map, Config.ORDER);
     }

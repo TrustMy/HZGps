@@ -56,6 +56,13 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
                 t.click(view,ml.get(pos));
             }
         });
+        viewHolder.foundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = viewHolder.getAdapterPosition();
+                t.click(view,ml.get(pos));
+            }
+        });
         return viewHolder;
     }
 
@@ -72,10 +79,12 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
             holder.statusTv.setTextColor(Color.parseColor("#98E165"));
             holder.statusTv.setText("提交成功");
             holder.submitBtn.setVisibility(View.GONE);
+            holder.foundBtn.setVisibility(View.VISIBLE);
         }else {
             holder.statusTv.setTextColor(Color.parseColor("#ff0000"));
             holder.statusTv.setText("提交失败");
             holder.submitBtn.setVisibility(View.VISIBLE);
+            holder.foundBtn.setVisibility(View.GONE);
         }
     }
 
@@ -86,11 +95,12 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView termIdTv,orderTv,startTv,endTv,timeTv,statusTv;
-        Button submitBtn;
+        Button submitBtn,foundBtn;
         View views;
         public ViewHolder(View itemView) {
             super(itemView);
             views = itemView;
+            foundBtn = (Button) itemView.findViewById(R.id.get_recycler_item_found_qr);
             termIdTv = (TextView) itemView.findViewById(R.id.get_recycler_item_termid);
             orderTv = (TextView) itemView.findViewById(R.id.get_recycler_item_order);
             startTv = (TextView) itemView.findViewById(R.id.get_recycler_item_start);

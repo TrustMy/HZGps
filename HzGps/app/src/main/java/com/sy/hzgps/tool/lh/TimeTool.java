@@ -19,7 +19,7 @@ public class TimeTool {
         return    System.currentTimeMillis();
     }
 
-    public String getGPSTime(long  time)
+    public static String getGPSTime(long  time)
     {
         L.d("time:"+time);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

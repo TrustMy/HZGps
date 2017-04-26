@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by jiayang on 2016/7/26.
  */
-public class GpsHelper implements Runnable {
+public class GpsHelper   implements Runnable {
 
     private static Logger logger = LoggerFactory.getLogger(GpsHelper.class);
 
@@ -111,7 +111,7 @@ public class GpsHelper implements Runnable {
         logger.info("GpsHelper init");
 
 
-        handler = new GpsHandler(this);
+//        handler = new GpsHandler(this);
 
         // 读取超速报警阈值
         SharedPreferences prefs = context.getSharedPreferences("CommParams", Context.MODE_PRIVATE);
@@ -298,8 +298,7 @@ public class GpsHelper implements Runnable {
 
                 lrpMessage.setGpsTime(System.currentTimeMillis() - 18000);
 
-                String whenTime = new TimeTool().getGPSTime(System.currentTimeMillis() - 18000);
-                L.d("whenTime:"+whenTime);
+                L.d("System.currentTimeMillis() :"+(System.currentTimeMillis()-18000));
 
                 lrpMessage.setFixed(gpsFixed);
                 lrpMessage.setLat(gpsLocation.getLatitude());

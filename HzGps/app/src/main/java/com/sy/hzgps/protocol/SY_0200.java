@@ -317,7 +317,7 @@ public class SY_0200 implements IMessageBody {
 		}
 
 	}
-
+	/*
 	@Override
 	public String toString() {
 
@@ -334,7 +334,7 @@ public class SY_0200 implements IMessageBody {
 
 		}
 	}
-
+*/
 	
 
 	public String toObdInfoString() {

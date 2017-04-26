@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.sy.hzgps.tool.lh.L;
+
 /**
  * Created by jiayang on 2015/9/15.
  */
@@ -27,8 +29,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-
         sqLiteDatabase.execSQL(SQL);
+        L.d("DBHelper create success");
     }
 
     @Override

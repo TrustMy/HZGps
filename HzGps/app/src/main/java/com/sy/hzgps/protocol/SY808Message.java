@@ -231,12 +231,13 @@ public class SY808Message {
 		}
 		return checkSum;
 	}
-	
+	/*
 	@Override
 	public String toString() {
 		String s = String.format("命令ID: 0x%04X, 命令序列号: 0x%04X, 命令内容: %s",
 				messageHeader.getMessageType(), messageHeader.getMessageSerialNo(), messageBody.toString());
-		
+
 		return s;
 	}
+	*/
 }

@@ -1,5 +1,7 @@
 package com.sy.hzgps.message;
 
+import com.sy.hzgps.ApkConfig;
+
 import java.io.Serializable;
 
 /**
@@ -10,7 +12,7 @@ public class ObdMessage implements Serializable {
     /**
      * 消息产生的时间
      */
-    private long timeStamp = System.currentTimeMillis();
+    private long timeStamp = ApkConfig.Time;
 
     public void setTimeStamp(long timeStamp){
         this.timeStamp = timeStamp;

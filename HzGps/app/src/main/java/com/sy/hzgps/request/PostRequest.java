@@ -53,6 +53,7 @@ public class PostRequest {
 
     public void requestOrder(String url, Map<String,Object> map,int type){
         JSONObject jsonObject = new JSONObject(map);
+        L.d("jsonObject:"+jsonObject.toString());
         setHeaders(url,jsonObject.toString(),type);
     }
 
