@@ -5,8 +5,9 @@ package com.sy.hzadministrator;
  */
 public class Server {
     //192.168.1.134:8080
-    public static final String Server = "http://139.196.229.233:8080/CAWebserver-0.1/";
-
+//    public static final String Server = "http://139.196.229.233:8080/CAWebserver-0.1/";
+    //测试上传订单
+    public static final String Server = "http://192.168.1.134:8080/";
     public static final String Order = "rest/insert/order";
 
     public static final String Loging = "rest/users/oauth/";

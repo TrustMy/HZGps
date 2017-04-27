@@ -171,6 +171,7 @@ public class MainActivity extends BaseActivity {
         map.put("endAddress", qrBean.getEndName());
         map.put("endTime", qrBean.getEndTime());
         map.put("generatePictureTime", qrBean.getGeneratePictureTime());
+        map.put("userName",Config.userName);
         map.put("permission", 1);
         postRequest.requestOrder(Server.Server + Server.Order, map, Config.ORDER);
     }

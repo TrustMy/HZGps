@@ -144,6 +144,9 @@ public class MainActivity extends BaseActivity {
                         saveData(Config.SAVE_STATUS_ERROR);
                         T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
                     }
+
+                    startLocationEd.setText("");
+                    endLocationEd.setText("");
                     break;
             }
         }
@@ -250,7 +253,7 @@ public class MainActivity extends BaseActivity {
     };
 
     /**
-     * 开始工作
+     * 确认开始工作
      *
      * @param v
      */
@@ -293,7 +296,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 结束
+     * 确认结束
      *
      * @param v
      */
@@ -327,6 +330,9 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    /***
+     *  停止gps
+     */
     private void closeGps() {
         start.setVisibility(View.VISIBLE);
         end.setVisibility(View.GONE);
@@ -399,10 +405,6 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == 1) {
-//            String t = data.getStringExtra("startTime");
-//
-//        }
 
         if (getImgFile().exists() && requestCode == ApkConfig.PhoneCode) {
 

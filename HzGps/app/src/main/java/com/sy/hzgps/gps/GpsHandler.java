@@ -20,12 +20,12 @@ public class GpsHandler extends Handler {
     private static Logger logger = LoggerFactory.getLogger(GpsHandler.class);
 
 
-    private WeakReference<GapGpsHelper> thread;
+    private final WeakReference<GapGpsHelper> thread;
     private GapGpsHelper gaoToGps ;
     public GpsHandler(GapGpsHelper t) {
 //        thread = new WeakReference<GpsHelper>(t);
 //        thread = new WeakReference<GapGpsHelper>((GapGpsHelper) t);
-        thread = new WeakReference<GapGpsHelper>( t);
+        thread = new WeakReference<GapGpsHelper>(t);
     }
 
     @Override

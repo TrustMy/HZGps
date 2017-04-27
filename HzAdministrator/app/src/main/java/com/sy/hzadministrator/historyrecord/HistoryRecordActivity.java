@@ -87,6 +87,7 @@ public class HistoryRecordActivity extends BaseActivity {
                 map.put("endAddress",orderBean.getEndName());
                 map.put("endTime",orderBean.getEndTime());
                 map.put("generatePictureTime",orderBean.getGeneratePictureTime());
+                map.put("userName",Config.userName);
                 map.put("permission",1);
                 postRequest.requestOrder(Server.Server+Server.Order,map, Config.ORDER);
             }

@@ -204,7 +204,6 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
                         lrpMessage.setAlt(aMapLocation.getAltitude());
                         lrpMessage.setGpsSpeed(speed);
                         lrpMessage.setBearing(aMapLocation.getBearing());
-//                    lrpMessage.setTimeStamp(aMapLocation.getTime());
 
 
 
@@ -247,6 +246,8 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
     public void startGps(){
 
         if (!gpsStarted) {
+            initGpsManagers();
+            L.d("启动定位");
             //启动定位
             mLocationClient.startLocation();
             gpsStarted = true;
@@ -270,9 +271,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
             Place = "";//地点
 
 
-            ApkConfig.startTime = 0 ;
-            ApkConfig.endTime = 0;
-            ApkConfig.generatePictureTime = 0;
+            gpsStarted = false;
 
             //停止
             mLocationClient.stopLocation();
@@ -298,7 +297,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
 
         editor.commit();
 
-        initGpsManagers();
+
 
 
     }
@@ -316,14 +315,16 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
         mLocationOption.setLocationMode(
                 AMapLocationClientOption.AMapLocationMode.Hight_Accuracy); //高精度定位
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        mLocationOption.setInterval(5*1000);
+        mLocationOption.setInterval(2*1000);
         mLocationOption.setHttpTimeOut(20000); //设置定位最大时间
         mLocationOption.setWifiScan(true);
+
+        mLocationOption.setOnceLocation(false);
+        //关闭缓存机制
+        mLocationOption.setLocationCacheEnable(false);
         //启动定位
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
-        //关闭缓存机制
-        mLocationOption.setLocationCacheEnable(false);
 
         L.d("Gps init success ");
     }

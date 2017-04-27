@@ -20,12 +20,14 @@ public class LoginActivity extends BaseActivity {
 
     private EditText termIdEd,pwdEd;
     private PostRequest postRequest;
+    private String temId;
     private Handler logHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case Config.LOGING:
                     if(msg.arg1 == Config.RESULT_SUCCESS){
+                        Config.userName = temId;
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     }else{
                         T.showToast(LoginActivity.this,(String)msg.obj);
@@ -81,10 +83,10 @@ public class LoginActivity extends BaseActivity {
     public void toMain(View v)
     {
         T.showToast(LoginActivity.this,"登录中...");
-        String temId = termIdEd.getText().toString().trim();
+        temId = termIdEd.getText().toString().trim();
         String pwd = pwdEd.getText().toString().trim();
-        startActivity(new Intent(LoginActivity.this,MainActivity.class));
-//        postRequest.loging(Server.Server+Server.Loging,temId,pwd,Config.LOGING);
+//        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+        postRequest.loging(Server.Server+Server.Loging,temId,pwd,Config.LOGING);
 
     }
 

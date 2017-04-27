@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sy.hzgps.ApkConfig;
 import com.sy.hzgps.R;
 
 /**
@@ -54,6 +55,9 @@ public class DialogTool {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+                    ApkConfig.startTime = 0 ;
+                    ApkConfig.endTime = 0;
+                    ApkConfig.generatePictureTime = 0;
 
                 }
             });
