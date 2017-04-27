@@ -153,6 +153,17 @@
           android:text="查看"
           android:layout_height="30dp"  />
 
+      <Button
+          android:id="@+id/get_date_item_update_photo_btn"
+          android:background="@drawable/get_date_item_btn"
+          android:layout_width="wrap_content"
+          android:layout_height="30dp"
+          android:text="修改订单图"
+          android:visibility="gone"
+          android:layout_marginRight="10dp"
+          android:layout_toLeftOf="@+id/get_recycler_item_found_qr"
+          android:layout_toStartOf="@+id/get_recycler_item_found_qr" />
+
 
    </RelativeLayout>
 

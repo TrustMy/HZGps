@@ -73,7 +73,7 @@ public class DialogTool {
 
 
     public static void showPhotoDialog(Context context, int layout, Bitmap bitmap,String time){
-        if(photoDialog  == null){
+
             PhotoView = LayoutInflater.from(context).inflate(layout,null);
             Photo = (ImageView) PhotoView.findViewById(R.id.dialog_photo_img);
             phototime = (TextView) PhotoView.findViewById(R.id.dialog_photo_time);
@@ -95,7 +95,7 @@ public class DialogTool {
             });
 
 
-        }
+
         Photo.setImageBitmap(bitmap);
         phototime.setText("生成时间:\n"+time);
         photoDialog.setContentView(PhotoView);

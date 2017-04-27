@@ -79,6 +79,13 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
 //                t.click(view,ml.get(pos));
             }
         });
+        viewHolder.updatePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = viewHolder.getAdapterPosition();
+                t.click(view,ml.get(pos));
+            }
+        });
         return viewHolder;
     }
 
@@ -96,12 +103,14 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
             holder.statusTv.setText("提交成功");
             holder.submitBtn.setVisibility(View.GONE);
             holder.foundBtn.setVisibility(View.VISIBLE);
+            holder.updatePhotoBtn.setVisibility(View.VISIBLE);
         }else {
 
             holder.statusTv.setTextColor(Color.parseColor("#ff0000"));
             holder.statusTv.setText("提交失败");
             holder.submitBtn.setVisibility(View.VISIBLE);
             holder.foundBtn.setVisibility(View.GONE);
+            holder.updatePhotoBtn.setVisibility(View.GONE);
         }
     }
 
@@ -112,7 +121,7 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView termIdTv,orderTv,startTv,endTv,timeTv,statusTv;
-        Button submitBtn,foundBtn;
+        Button submitBtn,foundBtn,updatePhotoBtn;
         ImageView test;
         View views;
         public ViewHolder(View itemView) {
@@ -127,7 +136,7 @@ public class GetDataRecyclerAdapter extends RecyclerView.Adapter<GetDataRecycler
             timeTv = (TextView) itemView.findViewById(R.id.get_recycler_item_time);
             statusTv = (TextView) itemView.findViewById(R.id.get_recycler_item_status);
             submitBtn = (Button) itemView.findViewById(R.id.get_recycler_item_submit);
-
+            updatePhotoBtn = (Button) itemView.findViewById(R.id.get_date_item_update_photo_btn);
         }
     }
     

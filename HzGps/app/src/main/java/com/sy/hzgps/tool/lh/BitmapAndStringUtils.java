@@ -1,10 +1,19 @@
 package com.sy.hzgps.tool.lh;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Base64;
+import android.widget.Toast;
+
+import com.sy.hzgps.ApkConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -91,6 +100,7 @@ public class BitmapAndStringUtils {
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                L.err("读取img 错误:"+e.toString());
             }
             L.d("rotate :"+rotate);
             // 1:compress bitmap
@@ -178,4 +188,37 @@ public class BitmapAndStringUtils {
         }
 
     }
+
+
+    public static void getPhoto(Activity context, File file){
+        String state = Environment.getExternalStorageState(); //拿到sdcard是否可用的状态码
+        if (state.equals(Environment.MEDIA_MOUNTED)){   //如果可用
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Uri imageUri = Uri.fromFile(file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            context.startActivityForResult(intent, ApkConfig.PhoneCode);
+        }else {
+            T.showToast(context,"sdcard不可用");
+        }
+    }
+
+
+    /**
+     * 设置文件存储路径，返回一个file
+     * @return
+     */
+    public  static File getImgFile(String name){
+        File file = new File(ApkConfig.fliePath);
+        if (!file.exists()){
+            //要点！
+            file.mkdirs();
+        }
+        File imgFile = new File(file,name+".jpg");
+        return imgFile;
+
+    }
+
+
+
+
 }

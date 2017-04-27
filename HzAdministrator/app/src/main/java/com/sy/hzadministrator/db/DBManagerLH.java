@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 
 import com.sy.hzadministrator.L;
@@ -116,6 +117,31 @@ public class DBManagerLH {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 通过订单号查有没有这条信息
+     * @param order
+     * @return
+     */
+    public String selectFirstDate(String order){
+        String selection = "orderNumble= ?" ;
+        String[] selectionArgs = new  String[]{ order };
+        String termId = null;
+        Bitmap bitmap = null;
+        if(!order.equals("")){
+            Cursor cursor = dbWrit.query("history",null,selection,selectionArgs,null,null,null);
+            if(cursor.moveToFirst()){
+                do {
+                    termId = cursor.getString(cursor.getColumnIndex("termId"));
+                }while (cursor.moveToNext());
+            }
+            cursor.close();
+            return termId;
+        }else{
+            return null;
+        }
     }
 
 }

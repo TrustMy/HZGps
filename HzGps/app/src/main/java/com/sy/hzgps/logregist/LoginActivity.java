@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity {
         String temId = termIdEd.getText().toString().trim();
         String pwd = pwdEd.getText().toString().trim();
 
-        if(!temId.equals("") && !pwd.equals("") && myService!= null){
+        if(!temId.equals("")  && myService!= null){
             myService.setReadyToRegister();
             String terminalId = null;
             for( int i = 0; i < 10 && terminalId == null; i++ ) {

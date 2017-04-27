@@ -145,8 +145,7 @@ public class MainActivity extends BaseActivity {
                         T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
                     }
 
-                    startLocationEd.setText("");
-                    endLocationEd.setText("");
+
                     break;
             }
         }
@@ -261,7 +260,7 @@ public class MainActivity extends BaseActivity {
     public void startGps(View v) {
         startName = startLocationEd.getText().toString().trim();
         if(!startName.equals("")){
-            getPhoto();
+            BitmapAndStringUtils.getPhoto(this,BitmapAndStringUtils.getImgFile(ApkConfig.flieName));
         }else{
             T.showToast(MainActivity.this,"请输入起点!");
         }
@@ -285,8 +284,7 @@ public class MainActivity extends BaseActivity {
             promptWorkTv.setVisibility(View.VISIBLE);
 
             startLocationEd.setEnabled(false);
-            endLocationEd.setText("");
-            endNameEdLayout.setVisibility(View.GONE);
+
 //            endLocationEd.setEnabled(false);
 
             myServer.startWorking();
@@ -350,36 +348,14 @@ public class MainActivity extends BaseActivity {
 
         timeMinute = 0;
         timeTv.setText("---------");
-
-
-    }
-
-    public void getPhoto(){
-        String state = Environment.getExternalStorageState(); //拿到sdcard是否可用的状态码
-        if (state.equals(Environment.MEDIA_MOUNTED)){   //如果可用
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri imageUri = Uri.fromFile(getImgFile());
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-            startActivityForResult(intent,ApkConfig.PhoneCode);
-        }else {
-            Toast.makeText(MainActivity.this,"sdcard不可用",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * 设置文件存储路径，返回一个file
-     * @return
-     */
-    private File getImgFile(){
-        File file = new File(ApkConfig.fliePath);
-        if (!file.exists()){
-            //要点！
-            file.mkdirs();
-        }
-        File imgFile = new File(file,ApkConfig.flieName+".jpg");
-        return imgFile;
+        endLocationEd.setText("");
+        endNameEdLayout.setVisibility(View.GONE);
 
     }
+
+
+
+
 
 
 
@@ -406,7 +382,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (getImgFile().exists() && requestCode == ApkConfig.PhoneCode) {
+        if (BitmapAndStringUtils.getImgFile(ApkConfig.flieName).exists() && requestCode == ApkConfig.PhoneCode) {
 
                 /*
                 String path = getImgFile().getPath();
@@ -560,8 +536,8 @@ public class MainActivity extends BaseActivity {
         map.put("driverId", termId);
         map.put("startAddress", startName);
         long startTime , endTime , genratePictureTime;
-        if(ApkConfig.startTime == 0 && ApkConfig.generatePictureTime == 0
-                && ApkConfig.endTime == 0){
+        if(ApkConfig.startTime == 0 || ApkConfig.generatePictureTime == 0
+                || ApkConfig.endTime == 0){
             startTime = TimeTool.getSystemTimeDate();
             endTime = startTime;
             genratePictureTime = endTime;
@@ -570,16 +546,22 @@ public class MainActivity extends BaseActivity {
             endTime = ApkConfig.endTime;
             genratePictureTime = ApkConfig.generatePictureTime;
         }
-
+        if(qR!= null){
         map.put("startTime", startTime);
         map.put("endAddress", endName);
         map.put("endTime", endTime);
         map.put("generatePictureTime", genratePictureTime);
         map.put("permission", 0);
+
+
+
         map.put("pictureStr", BitmapAndStringUtils.convertIconToString(qR));
         map.put("orderPic",BitmapAndStringUtils.convertIconToString(ApkConfig.PhotoBitMap));
 
         postRequest.requestOrder(Server.Server + Server.Order, map, Config.ORDER);
+        }else{
+            T.showToast(MainActivity.this,"二维码不能为空!");
+        }
     }
 
     @Override

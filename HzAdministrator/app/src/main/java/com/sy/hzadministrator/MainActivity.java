@@ -124,7 +124,13 @@ public class MainActivity extends BaseActivity {
                                 @Override
                                 public void onClick() {
                                     T.showToast(MainActivity.this,"提交订单中...");
-                                    setHttpData(qrBean);
+
+                                    String termId = dbManagerLH.selectFirstDate(qrBean.getOrder());
+                                    if(termId == null){
+                                        setHttpData(qrBean);
+                                    }else{
+                                        T.showToast(MainActivity.this,"该订单已存在!");
+                                    }
 
                                 }
                             };
