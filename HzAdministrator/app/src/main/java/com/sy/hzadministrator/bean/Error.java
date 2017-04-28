@@ -5,27 +5,28 @@ package com.sy.hzadministrator.bean;
  */
 public class Error {
 
+
     /**
+     * err : 参数类型错误
      * status : false
-     * err : 错误原因
      */
 
-    private boolean status;
     private String err;
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    private boolean status;
 
     public void setErr(String err) {
         this.err = err;
     }
 
-    public boolean getStatus() {
-        return status;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getErr() {
         return err;
+    }
+
+    public boolean getStatus() {
+        return status;
     }
 }

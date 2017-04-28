@@ -56,7 +56,8 @@
 
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:label="司机">
 
         </activity>
         <activity android:name=".QRCodeActivity"

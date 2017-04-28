@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.sy.hzgps.Config;
 import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
 import com.sy.hzgps.tool.sy.Constants;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.tool.sy.ServerType;
@@ -701,11 +702,11 @@ public class CACommHelper extends CommHelper {
                     if (replyResult == 0 ) {
 
                         logger.info(String.format("0900 Reply, SN = 0x%04x", messageSerialNo));
-
+                        L.d(String.format("0900 Reply, SN = 0x%04x", messageSerialNo));
 
                     } else {
                         logger.info("---0900 replyResult = " + replyResult );
-
+                        L.d("---0900 replyResult = " + replyResult );
                     }
 
                     break;
@@ -714,13 +715,14 @@ public class CACommHelper extends CommHelper {
                 default:
 
                     logger.info(String.format("0001 Reply, SN = 0x%04x", messageSerialNo));
-
+                    L.d(String.format("0001 Reply, SN = 0x%04x", messageSerialNo));
                     break;
             }
 
 
         } else {
             logger.info("Parse SY8001 ( Common Reply ) failure!");
+            L.d("Parse SY8001 ( Common Reply ) failure!");
         }
 
         synchronized (isWaitForResponse) {

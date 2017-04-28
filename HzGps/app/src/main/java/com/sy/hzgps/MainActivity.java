@@ -133,6 +133,7 @@ public class MainActivity extends BaseActivity {
                     map.put("status", orderBean.getStatus());
                     map.put("orderPhotoBit",orderBean.getOrderPhotoBit());
                     L.d("orderBean.getStatus():" + orderBean.getStatus());
+                    L.d("Config.SAVE_HISTORY startTime:"+ orderBean.getStartTime());
                     dbManagerLH.addOrder(map);
                     break;
 
@@ -159,6 +160,7 @@ public class MainActivity extends BaseActivity {
      */
     public String getMsg(String time) {
         if (!startName.equals("") && !endName.equals("")) {
+
             Map<String, Object> map = new WeakHashMap<String, Object>();
             order = GenerateSequence.generateSequenceNo() + IMEI;
             map.put("order", order);
@@ -166,11 +168,25 @@ public class MainActivity extends BaseActivity {
             map.put("startName", startName);
             map.put("endName", endName);
             map.put("time", time);
-            map.put("startTime", ApkConfig.startTime + "");
-            map.put("endTime", ApkConfig.endTime + "");
-            map.put("generatePictureTime", ApkConfig.generatePictureTime + "");
+            if(ApkConfig.startTime == 0){
+                map.put("startTime", TimeTool.getSystemTimeDate() + "");
+            }else{
+                map.put("startTime", ApkConfig.startTime + "");
+            }
+            if(ApkConfig.endTime == 0){
+                map.put("endTime", TimeTool.getSystemTimeDate() + "");
+            }else{
+                map.put("endTime", ApkConfig.endTime + "");
+            }
+            if(ApkConfig.generatePictureTime == 0){
+                map.put("generatePictureTime", TimeTool.getSystemTimeDate() + "");
+            }else{
+                map.put("generatePictureTime", ApkConfig.generatePictureTime + "");
+            }
+
+
             JSONObject jsonObject = new JSONObject(map);
-            L.d("retunr json");
+            L.d("getMsg starttime:"+ApkConfig.startTime);
             return jsonObject.toString();
         } else {
             L.d("null");
@@ -351,6 +367,10 @@ public class MainActivity extends BaseActivity {
         endLocationEd.setText("");
         endNameEdLayout.setVisibility(View.GONE);
 
+
+        ApkConfig.startTime = 0 ;
+        ApkConfig.endTime = 0;
+        ApkConfig.generatePictureTime = 0;
     }
 
 
@@ -490,6 +510,8 @@ public class MainActivity extends BaseActivity {
             }
 
 
+
+
         } catch (WriterException e) {
             e.printStackTrace();
             Toast.makeText(this, "二维码生成错误", Toast.LENGTH_LONG).show();
@@ -514,6 +536,7 @@ public class MainActivity extends BaseActivity {
             genratePictureTime = ApkConfig.generatePictureTime;
         }
 
+        L.d("saveData startTime:"+startTime);
         Message message = Message.obtain();
         message.what = Config.SAVE_HISTORY;
         L.d("photo bit :"+BitmapAndStringUtils.
@@ -546,15 +569,13 @@ public class MainActivity extends BaseActivity {
             endTime = ApkConfig.endTime;
             genratePictureTime = ApkConfig.generatePictureTime;
         }
+        L.d("requestHttpDb startTime:"+startTime);
         if(qR!= null){
         map.put("startTime", startTime);
         map.put("endAddress", endName);
         map.put("endTime", endTime);
         map.put("generatePictureTime", genratePictureTime);
         map.put("permission", 0);
-
-
-
         map.put("pictureStr", BitmapAndStringUtils.convertIconToString(qR));
         map.put("orderPic",BitmapAndStringUtils.convertIconToString(ApkConfig.PhotoBitMap));
 

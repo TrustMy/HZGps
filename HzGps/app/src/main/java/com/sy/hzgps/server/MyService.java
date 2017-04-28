@@ -238,7 +238,7 @@ public class MyService extends Service {
         lrpMessage.setGpsSpeed(0);
         lrpMessage.setBearing(0);
 
-
+        L.d("startWorking startTime:"+lrpMessage.getGpsTime()+"|timesap:"+lrpMessage.getTimeStamp());
         lrpMessage.setEngineStatus(EngineStatus.FIRE_ON.value());
 
 
@@ -285,7 +285,8 @@ public class MyService extends Service {
         lrpMessage.setAlt(0);
         lrpMessage.setGpsSpeed(0);
         lrpMessage.setBearing(0);
-
+        L.d("end work gps time :"+lrpMessage.getGpsTime()+
+                "|getTimeStamp"+lrpMessage.getTimeStamp());
 
         lrpMessage.setEngineStatus(EngineStatus.FIRE_OFF.value());
 
@@ -293,7 +294,7 @@ public class MyService extends Service {
         Bundle data = new Bundle();
         data.putSerializable("location", lrpMessage);
 
-
+        L.d("stopWorking endTime:"+lrpMessage.getGpsTime());
 
         Message message = Message.obtain();
         message.setData(data);

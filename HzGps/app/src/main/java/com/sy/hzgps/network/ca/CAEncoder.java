@@ -191,11 +191,15 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 		header.setPhoneNumber(commHelper.getTerminalId());//commHelper.getSimNumber());
 		header.setIsPackage(false);
 
-
+		Date date;
 		SY_0200 body = new SY_0200();
 
+		if(ApkConfig.Time == 0){
+			date = new Date();
+		}else{
+			date = new Date(ApkConfig.Time);
+		}
 
-		Date date = new Date(ApkConfig.Time);
 
 		L.d("Year:"+(date.getYear()));
 		body.setYear((byte)(date.getYear()-100));

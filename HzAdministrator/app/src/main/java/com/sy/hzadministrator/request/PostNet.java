@@ -57,7 +57,7 @@ public class PostNet extends Handler {
 
     private void checkData(String msg,int type) {
         RequestDataBean bean = gson.fromJson(msg,RequestDataBean.class);
-
+        Error error = gson.fromJson(msg,Error.class);
         if(bean.getStatus()){
             toHander(bean,type,Config.RESULT_SUCCESS);
         }else{

@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
                 case SCAN_PIC:
                     final String resultq = data.getExtras().getString("result");
 //                    Toast.makeText(MainActivity.this, "解析结果：SCAN_PIC" + resultq, Toast.LENGTH_LONG).show();
-
+                    L.d("json :"+resultq);
                     try {
                         final QrBean qrBean = gson.fromJson(resultq, QrBean.class);
                         mQrBean = qrBean;
@@ -170,6 +170,7 @@ public class MainActivity extends BaseActivity {
      */
     private void setHttpData(QrBean qrBean) {
         Map<String, Object> map = new WeakHashMap<>();
+
         map.put("orderNo", qrBean.getOrder());
         map.put("driverId", qrBean.getTermId());
         map.put("startAddress", qrBean.getStartName());

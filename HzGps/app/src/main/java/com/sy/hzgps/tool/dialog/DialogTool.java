@@ -55,9 +55,7 @@ public class DialogTool {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    ApkConfig.startTime = 0 ;
-                    ApkConfig.endTime = 0;
-                    ApkConfig.generatePictureTime = 0;
+
 
                 }
             });

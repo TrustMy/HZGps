@@ -108,6 +108,7 @@ public class DBManagerLH {
             contentValues.put("orderPhotoBit", (String) map.get("orderPhotoBit"));
 
             L.d("map.get(\"status\"):"+(Integer)map.get("status"));
+            L.d("addOrder startName:"+map.get("startName"));
             contentValues.put("status",(Integer) map.get("status"));
             dbWrit.insert("history",null,contentValues);
             contentValues.clear();
@@ -145,6 +146,7 @@ public class DBManagerLH {
                 long generatePictureTime = Long.
                         parseLong(cursor.getString(cursor.getColumnIndex("generatePictureTime")));
                 L.d("status selectOrder:"+status);
+                L.d("selectOrder startTime:"+startTime);
                 ml.add(new OrderBean(order,startName,endName,time,bitmap,termId,status,startTime,
                         endTime,generatePictureTime,orderPhotoBit));
             }while (cursor.moveToNext());

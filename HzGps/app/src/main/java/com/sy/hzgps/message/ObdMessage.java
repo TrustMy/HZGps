@@ -12,7 +12,7 @@ public class ObdMessage implements Serializable {
     /**
      * 消息产生的时间
      */
-    private long timeStamp = ApkConfig.Time;
+    private long timeStamp = ApkConfig.Time!=0?ApkConfig.Time:System.currentTimeMillis();
 
     public void setTimeStamp(long timeStamp){
         this.timeStamp = timeStamp;

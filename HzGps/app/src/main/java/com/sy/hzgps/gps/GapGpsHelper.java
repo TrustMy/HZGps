@@ -193,8 +193,9 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
 
                         lrpMessage.setGpsTime(ApkConfig.Time);
 
-                        L.d("time :"+ApkConfig.Time);
-                        L.d("System.currentTimeMillis() :"+(System.currentTimeMillis()-18000));
+                        L.d("gps location lrpMessage gps time :"+lrpMessage.getGpsTime()
+                        +"|getTimeStamp :"+lrpMessage.getTimeStamp());
+
 
                         lrpMessage.setFixed(gpsFixed);
 
@@ -313,7 +314,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
         //初始化AMapLocationClientOption对象
         mLocationOption = new AMapLocationClientOption();
         mLocationOption.setLocationMode(
-                AMapLocationClientOption.AMapLocationMode.Hight_Accuracy); //高精度定位
+                AMapLocationClientOption.AMapLocationMode.Device_Sensors); //仅gps 定位
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
         mLocationOption.setInterval(2*1000);
         mLocationOption.setHttpTimeOut(20000); //设置定位最大时间
