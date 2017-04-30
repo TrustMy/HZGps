@@ -1,5 +1,13 @@
 [
     {
+        "merged": "F:\\work\\Hz\\HzAdministrator\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\beep.ogg",
+        "source": "F:\\work\\Hz\\HzAdministrator\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\raw\\beep.ogg"
+    },
+    {
+        "merged": "F:\\work\\Hz\\HzAdministrator\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\realm_properties",
+        "source": "F:\\work\\Hz\\HzAdministrator\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\raw\\realm_properties"
+    },
+    {
         "merged": "D:\\workSpace\\HzGpsSy\\HzAdministrator\\erwmlib\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\realm_properties",
         "source": "D:\\workSpace\\HzGpsSy\\HzAdministrator\\erwmlib\\build\\intermediates\\bundles\\debug\\res\\raw\\realm_properties"
     },

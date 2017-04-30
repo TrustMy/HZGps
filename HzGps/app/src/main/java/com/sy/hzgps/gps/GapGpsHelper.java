@@ -10,6 +10,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -18,6 +19,7 @@ import com.sy.hzgps.ApkConfig;
 import com.sy.hzgps.Config;
 import com.sy.hzgps.MyContext;
 import com.sy.hzgps.bean.ShowGpsBean;
+import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.message.CommonMessage;
 import com.sy.hzgps.message.ObdMessageID;
 import com.sy.hzgps.message.ca.CAAlarmReportMessage;
@@ -80,6 +82,8 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
     public static Handler mainHandler;
 
     protected static boolean gpsStarted = false;
+
+    private DBManagerLH dbManagerLH;
 
     //声明定位回调监听器
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
@@ -145,7 +149,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
                             //alarmMessage.setGpsTime(System.currentTimeMillis() - 18000);
                             alarmMessage.setGpsTime(ApkConfig.Time);
 
-
+                            //
                             alarmMessage.setFixed(gpsFixed);
                             alarmMessage.setLat(hm.get("lat"));
                             alarmMessage.setLng(hm.get("lon"));
@@ -224,14 +228,14 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
                         L.d("lrpMessage: lat:"+lrpMessage.getLat()+"|long:"+lrpMessage.getLng()+"|" +
                                 "alt:"+lrpMessage.getAlt()+"|bear:"+lrpMessage.getBearing()
                                 +"|speed:"+lrpMessage.getGpsSpeed()+"|time:"+
-                                lrpMessage.getTimeStamp());
+                                lrpMessage.getGpsTime());
                     }
 
 
                     Message message = new Message();
                     message.what = Config.GPS;
                     message.obj = new ShowGpsBean(aMapLocation.getLatitude(),aMapLocation.getLongitude()
-                            ,speed,isOverSpeed);
+                            ,speed,isOverSpeed,aMapLocation.getTime());
                     mainHandler.sendMessage(message);
                 }
 
@@ -247,7 +251,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
     public void startGps(){
 
         if (!gpsStarted) {
-            initGpsManagers();
+
             L.d("启动定位");
             //启动定位
             mLocationClient.startLocation();
@@ -298,8 +302,8 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
 
         editor.commit();
 
-
-
+        dbManagerLH = new DBManagerLH(context);
+        initGpsManagers();
 
     }
 

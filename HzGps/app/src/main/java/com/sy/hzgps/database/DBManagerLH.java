@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.sy.hzgps.Config;
+import com.sy.hzgps.bean.GpsBean;
 import com.sy.hzgps.bean.OrderBean;
 import com.sy.hzgps.bean.QRcodeBean;
 import com.sy.hzgps.message.ObdMessage;
@@ -193,5 +194,52 @@ public class DBManagerLH {
         }else{
             return null;
         }
+    }
+
+
+    /**
+     * 保存gps 数据
+     * @param
+     * @param time
+     * @return
+     */
+    public  void addGps(double lat,double lon,long time,int carStatus){
+            contentValues.put("lat",lat+"");
+            contentValues.put("lon",lon+"");
+            contentValues.put("time",time+"");
+            contentValues.put("carStatus",carStatus);
+            dbWrit.insert("gpsHistory",null,contentValues);
+            contentValues.clear();
+            L.d("add  GPS success!");
+            contentValues.clear();
+
+    }
+
+    /**
+     * 查询gps 坐标
+     * @return
+     */
+    public List<GpsBean> selectGps (){
+        List<GpsBean> ml = new ArrayList<>();
+        Cursor cursor = dbWrit.query("gpsHistory",null,null,null,null,null,null);
+
+        if(cursor.moveToFirst()){
+            do {
+                L.d("select");
+                double lat = Double.parseDouble(cursor.getString(cursor.getColumnIndex("lat")));
+                int carStatus = cursor.getColumnIndex("carStatus");
+                double lon = Double.parseDouble(cursor.getString(cursor.getColumnIndex("lon")));
+                long time = Long.parseLong(cursor.getString(cursor.getColumnIndex("time")));
+                ml.add(new GpsBean(lat,lon,time,carStatus));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return ml;
+    }
+
+
+    public void delGps(){
+        dbWrit.delete("gpsHistory",null,null);
+        L.d("delGps suceess!");
     }
 }

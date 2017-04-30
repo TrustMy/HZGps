@@ -7,12 +7,22 @@ public class ShowGpsBean {
     private double lat,lon;
     private float speed;
     private boolean isOverSpeed;
+    private long time;
 
-    public ShowGpsBean(double lat, double lon, float speed, boolean isOverSpeed) {
+    public ShowGpsBean(double lat, double lon, float speed, boolean isOverSpeed , long time) {
         this.lat = lat;
         this.lon = lon;
         this.speed = speed;
+        this.time = time;
         this.isOverSpeed = isOverSpeed;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public boolean isOverSpeed() {

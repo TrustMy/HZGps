@@ -350,7 +350,7 @@ public class GpsHelper   implements Runnable {
             Message message = new Message();
             message.what = Config.GPS;
             message.obj = new ShowGpsBean(location.getLatitude(),location.getLongitude()
-            ,speed,isOverSpeed);
+            ,speed,isOverSpeed,location.getTime());
             mainHandler.sendMessage(message);
         }
     };

@@ -33,6 +33,13 @@ public class DBHelperLH extends SQLiteOpenHelper {
             "orderPhotoBit text,"+
             "time text)";
 
+    private static final String CREATE_GPS_HISTORY = "create table gpsHistory(" +
+            "id integer primary key autoincrement," +
+            "lat text,"+
+            "lon text,"+
+            "carStatus integer,"+
+            "time text)";
+
 
     private Context mContext;
 
@@ -51,6 +58,7 @@ public class DBHelperLH extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_IMG);
         db.execSQL(CREATE_HISTORY);
+        db.execSQL(CREATE_GPS_HISTORY);
         L.d("dataBase create susscess!");
     }
 

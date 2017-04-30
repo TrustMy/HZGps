@@ -4,6 +4,8 @@ package com.sy.hzgps.network.ca;
 
 
 import com.sy.hzgps.ApkConfig;
+import com.sy.hzgps.MyContext;
+import com.sy.hzgps.database.DBManagerLH;
 import com.sy.hzgps.message.GpsMessage;
 import com.sy.hzgps.message.ObdMessage;
 import com.sy.hzgps.message.ObdMessageID;
@@ -28,7 +30,7 @@ import java.nio.charset.Charset;
 import java.util.Date;
 
 public class CAEncoder extends ProtocolEncoderAdapter {
-
+	private DBManagerLH dbManagerLH;
 	private final Charset charset;
 	private CACommHelper commHelper;
 
@@ -41,13 +43,14 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 	public CAEncoder(Charset charset, CACommHelper commHelper) {
 		this.charset = charset;
 		this.commHelper = commHelper;
+		dbManagerLH = new DBManagerLH(MyContext.getContext());
 	}
 
     //在此处实现对Msg ProtocolEncoder包的编码工作，并把它写入输出流中
 	public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
         //logger.info("--- Msg ProtocolEncoder encode() ---  ");
 		if (message != null && message instanceof ObdMessage) {
-			L.d("message:"+message.toString());
+			L.d("message:"+message.toString()+"|id:"+((ObdMessage) message).getMessageId());
 			ObdMessage obdMessage = (ObdMessage) message;
 
 			SY808Message sendMessage = null;
@@ -221,6 +224,8 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 		engineStatus.setEngineStatus((byte)gpsMessage.getEngineStatus());
 
 		body.addAdditional(engineStatus);
+
+		dbManagerLH.addGps(gpsMessage.getLat(),gpsMessage.getLng(),gpsMessage.getGpsTime(),gpsMessage.getEngineStatus());
 
 		if ( engineStatus.getEngineStatus() == 1 || engineStatus.getEngineStatus() == 4 ) {
 			body.setAccOn(true);

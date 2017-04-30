@@ -33,7 +33,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.MarkerOptions;
 import com.google.zxing.WriterException;
+import com.sy.hzgps.bean.GpsBean;
 import com.sy.hzgps.bean.OrderBean;
 import com.sy.hzgps.bean.QRcodeBean;
 import com.sy.hzgps.bean.ShowGpsBean;
@@ -55,6 +62,8 @@ import com.sy.hzgps.tool.lh.L;
 import com.sy.hzgps.tool.lh.T;
 import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.dialog.DialogTool;
+import com.sy.hzgps.tool.lh.gps.CoordinateTransformation;
+import com.sy.hzgps.tool.lh.gps.GPSHistoryLine;
 import com.sy.hzgps.tool.qrcode.QRcodeTool;
 
 import org.json.JSONObject;
@@ -67,6 +76,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,8 +108,9 @@ public class MainActivity extends BaseActivity {
 
     private PostRequest postRequest;
 
-
-
+    private MapView mMapView;
+    private AMap aMap;
+    private CoordinateTransformation coordinateTransformation;
     public Handler dataHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -109,6 +120,9 @@ public class MainActivity extends BaseActivity {
                         DecimalFormat df = new DecimalFormat("#0.0");
                         ShowGpsBean showGpsBean = (ShowGpsBean) msg.obj;
                         gpsMsg.setText(df.format(showGpsBean.getSpeed()) + "");
+
+                        shwoGps(showGpsBean);
+
 
                     }
                     break;
@@ -151,6 +165,25 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+
+
+
+
+    private void shwoGps(ShowGpsBean showGpsBean) {
+        LatLng gps = new LatLng(showGpsBean.getLat(),showGpsBean.getLon());
+        aMap.clear();
+        aMap.addMarker(new MarkerOptions().
+                position(gps).
+                title("当前位置\n"+TimeTool.getGPSTime(showGpsBean.getTime())))
+                .showInfoWindow();
+
+        aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                gps,//新的中心点坐标
+                500, //新的缩放级别
+                0, //俯仰角0°~45°（垂直与地图时为0）
+                0  ////偏航角 0~360° (正北方为0)
+        )));
+    }
 
     /**
      * 设置二维码生成的内容
@@ -201,6 +234,16 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //获取地图控件引用
+        mMapView = (MapView) findViewById(R.id.map);
+        //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
+        mMapView.onCreate(savedInstanceState);
+        if (aMap == null) {
+            aMap = mMapView.getMap();
+        }
+        coordinateTransformation = new CoordinateTransformation(MainActivity.this);
+
 
         new AndroidCheckVersion(this).checkVersion();
         init();
@@ -296,7 +339,7 @@ public class MainActivity extends BaseActivity {
             end.setVisibility(View.VISIBLE);
 
             logo.setImageResource(R.drawable.truck_on);
-            promptTv.setVisibility(View.VISIBLE);
+//            promptTv.setVisibility(View.VISIBLE);
             promptWorkTv.setVisibility(View.VISIBLE);
 
             startLocationEd.setEnabled(false);
@@ -383,6 +426,22 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         unbindService(serviceConnection);
         super.onDestroy();
+        mMapView.onDestroy();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
+        mMapView.onPause();
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，
+        // 保存地图当前的状态
+        mMapView.onSaveInstanceState(outState);
     }
 
     @Override
@@ -392,6 +451,7 @@ public class MainActivity extends BaseActivity {
         if (s != null) {
             workMsg.setText(s);
         }
+        mMapView.onResume();
     }
 
     /**
@@ -593,6 +653,37 @@ public class MainActivity extends BaseActivity {
         switch (view.getId()) {
 
         }
+    }
+
+
+    public void selecGps(View v){
+        List<GpsBean> mGps =  dbManagerLH.selectGps();
+        List<LatLng> ml = new ArrayList<>();
+        if(mGps.size() == 0){
+            T.showToast(MainActivity.this,"gps List :"+0);
+        }else{
+            T.showToast(MainActivity.this,"gps List :"+mGps.size());
+
+            for (int i = 0; i < mGps.size(); i++) {
+                L.d("selecGps bean :"+mGps.get(i).toString());
+                if(mGps.get(i).getLat() == 0){
+                    continue;
+                }else{
+
+                    ml.add(coordinateTransformation.transformation(new LatLng(mGps.get(i).getLat(),mGps.get(i).getLon())));
+                }
+            }
+
+
+            GPSHistoryLine gpsHistoryLine = new GPSHistoryLine(aMap,MainActivity.this);
+            gpsHistoryLine.setLatLngs(ml);
+            gpsHistoryLine.startHistory("start","end");
+        }
+    }
+
+    public void delGps(View v){
+        aMap.clear();
+        dbManagerLH.delGps();
     }
 
 
