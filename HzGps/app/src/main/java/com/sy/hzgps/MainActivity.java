@@ -163,8 +163,8 @@ public class MainActivity extends BaseActivity {
                         T.showToast(MainActivity.this, " 提交订单成功!");
                         saveData(Config.SAVE_STATUS_SUCCESS);
                     } else {
-                        saveData(Config.SAVE_STATUS_ERROR);
                         T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
+                        saveData(Config.SAVE_STATUS_ERROR);
                     }
                     ApkConfig.startTime = 0 ;
                     ApkConfig.endTime = 0;
