@@ -185,9 +185,6 @@ public class BitmapAndStringUtils {
             L.d("onActivityResult: bitmap:"+bitmap.toString()
                     +"|bitmap2 大小:"+(bitmap.getByteCount() / 1024 )+"KB");
 
-            String img = BitmapAndStringUtils.convertIconToString(bitmap);
-
-                    L.d("String img :"+(img.getBytes().length / 1024) + "kb");
 
 
 

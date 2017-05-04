@@ -517,9 +517,8 @@ public class MainActivity extends BaseActivity {
                         flieName,ApkConfig.fliePath);
             }
 
-                ApkConfig.PhotoBitMapString = BitmapAndStringUtils.convertIconToString
-                        (ApkConfig.PhotoBitMap);
-                if(ApkConfig.PhotoBitMap != null){
+            getBitmapStringThread();
+            if(ApkConfig.PhotoBitMap != null){
 //                    logo.setImageBitmap(ApkConfig.PhotoBitMap);
                     String time;
                     if(ApkConfig.endTime == 0){
@@ -552,9 +551,19 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void getBitmapStringThread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ApkConfig.PhotoBitMapString = BitmapAndStringUtils.convertIconToString
+                        (ApkConfig.PhotoBitMap);
+            }
+        }).start();
+
+    }
 
 
-                @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;

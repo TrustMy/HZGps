@@ -197,10 +197,10 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 		Date date;
 		SY_0200 body = new SY_0200();
 
-		if(ApkConfig.Time == 0){
+		if(gpsMessage.getGpsTime() == 0){
 			date = new Date();
 		}else{
-			date = new Date(ApkConfig.Time);
+			date = new Date(gpsMessage.getGpsTime());
 		}
 
 
