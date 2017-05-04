@@ -24,4 +24,6 @@ public class Config {
     //userName
     public static String userName;
 
+    public static long twoMoth = 5270400000L;
+
 }

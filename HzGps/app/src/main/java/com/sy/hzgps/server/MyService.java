@@ -17,6 +17,7 @@ import com.sy.hzgps.Config;
 import com.sy.hzgps.MainActivity;
 import com.sy.hzgps.gps.GapGpsHelper;
 import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.sy.EngineStatus;
 import com.sy.hzgps.tool.sy.ServerType;
 import com.sy.hzgps.gps.GpsHelper;
@@ -29,6 +30,7 @@ import com.sy.hzgps.network.ca.CACommHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -227,9 +229,13 @@ public class MyService extends Service {
         // 发送开始工作的消息给服务器
         // 生成 位置汇报 消息
         CALocationReportMessage lrpMessage = new CALocationReportMessage(ObdMessageID.OBD_REPORT, true);
+        //开始工作 gps 没信号 去系统时间
+        if(ApkConfig.startTime == 0){
+            ApkConfig.startTime = TimeTool.getSystemTimeDate();
+        }
+        lrpMessage.setGpsTime( ApkConfig.startTime);
 
-        lrpMessage.setGpsTime(System.currentTimeMillis() - 18000);
-        L.d("start apk time :"+(System.currentTimeMillis() - 18000));
+        L.d("start working start Time :"+TimeTool.getSystemTimeDate());
 
         lrpMessage.setFixed(false);
         lrpMessage.setLat(0);
@@ -238,7 +244,7 @@ public class MyService extends Service {
         lrpMessage.setGpsSpeed(0);
         lrpMessage.setBearing(0);
 
-        L.d("startWorking startTime:"+lrpMessage.getGpsTime()+"|timesap:"+lrpMessage.getTimeStamp());
+
         lrpMessage.setEngineStatus(EngineStatus.FIRE_ON.value());
 
 
@@ -276,12 +282,16 @@ public class MyService extends Service {
         // 生成 位置汇报 消息
         CALocationReportMessage lrpMessage = new CALocationReportMessage(ObdMessageID.OBD_REPORT, true);
 
-        lrpMessage.setGpsTime(ApkConfig.Time);
-
+        if(ApkConfig.Time == 0){
+            //如果 gps 一直没信号 time 为 0  去当前系统时间
+            ApkConfig.endTime = TimeTool.getSystemTimeDate();
+        }
+        lrpMessage.setGpsTime(ApkConfig.endTime);
+        L.d("stopWorking ApkConfig.Time :"+ApkConfig.Time +"|ApkConfig.endTime:"+ApkConfig.endTime);
 
         lrpMessage.setFixed(false);
-        lrpMessage.setLat(0);
-        lrpMessage.setLng(0);
+        lrpMessage.setLat(ApkConfig.updateLat);
+        lrpMessage.setLng(ApkConfig.updateLon);
         lrpMessage.setAlt(0);
         lrpMessage.setGpsSpeed(0);
         lrpMessage.setBearing(0);

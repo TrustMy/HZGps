@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
@@ -17,6 +18,7 @@ import com.sy.hzadministrator.R;
 import com.sy.hzadministrator.RecyclerViewDivider;
 import com.sy.hzadministrator.Server;
 import com.sy.hzadministrator.T;
+import com.sy.hzadministrator.TimeTool;
 import com.sy.hzadministrator.bean.RequestDataBean;
 import com.sy.hzadministrator.db.DBManagerLH;
 import com.sy.hzadministrator.db.OrderBean;
@@ -67,6 +69,13 @@ public class HistoryRecordActivity extends BaseActivity {
     }
 
     private void initView() {
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+
         historyRecordRecyclerView = findView(R.id.hzadministrator_recycler);
         historyRecordAdapter = new HistoryrecordAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -99,14 +108,39 @@ public class HistoryRecordActivity extends BaseActivity {
         dbManagerLH = new DBManagerLH(this);
         initData();
     }
+    /**
+     * toolbar 返回按钮
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
     private void initData() {
         List<OrderBean> ml = dbManagerLH.select();
         if(ml.size() == 0){
-
+            T.showToast(HistoryRecordActivity.this,"历史记录为空!");
         }else{
-            historyRecordAdapter.setMl(ml);
-            historyRecordAdapter.notifyDataSetChanged();
+            long time = TimeTool.getSystemTimeDate() - Config.twoMoth ;
+            dbManagerLH.deleTimeOrder(time+"");
+            if(ml.size() == 0){
+                T.showToast(HistoryRecordActivity.this,"历史记录为空!");
+            }else{
+                historyRecordAdapter.setMl(ml);
+                historyRecordAdapter.notifyDataSetChanged();
+
+            }
+
         }
     }
 }

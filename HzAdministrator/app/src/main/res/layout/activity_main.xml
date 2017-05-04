@@ -15,7 +15,7 @@
         />
     <Button
         android:textColor="#ffffff"
-        android:background="@drawable/btn_off_bg"
+        android:background="@drawable/loging_btn_bg"
         android:text="扫一扫"
         android:layout_marginTop="30dp"
         android:onClick="startQr"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:background="@drawable/btn_on_bg"
+        android:background="@drawable/order_btn_bg"
         android:layout_marginTop="10dp"
         android:text="订单记录"
         android:textColor="#074059"

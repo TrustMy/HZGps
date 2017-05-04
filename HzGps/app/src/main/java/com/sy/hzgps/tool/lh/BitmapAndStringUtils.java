@@ -1,15 +1,19 @@
 package com.sy.hzgps.tool.lh;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 
 /**图片转换,压缩
  * Created by Trust on 2017/4/13.
@@ -67,6 +72,22 @@ public class BitmapAndStringUtils {
     }
 
 
+    public static Bitmap versionSevenYaSuo(Bitmap bitmap){
+        // 尺寸压缩倍数,值越大，图片尺寸越小
+        int ratio = 2;
+        // 压缩Bitmap到对应尺寸
+        Bitmap result = Bitmap.createBitmap(bitmap.getWidth() / ratio, bitmap.getHeight() / ratio, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        Rect rect = new Rect(0, 0, bitmap.getWidth() / ratio, bitmap.getHeight() / ratio);
+        canvas.drawBitmap(bitmap, null, rect, null);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // 把压缩后的数据存放到baos中
+        result.compress(Bitmap.CompressFormat.JPEG, 100 ,baos);
+        return result;
+    }
+
+
     /**
      * bitmap 压缩,旋转,保存
      * @param fileName
@@ -78,6 +99,7 @@ public class BitmapAndStringUtils {
             int quality = 80;
             Bitmap bitmap = null;
             //
+            L.d("filePath:"+filePath+"|fileName:"+fileName);
             File f = new File(filePath,fileName + ".jpg");
             int rotate = 0;
             try {
@@ -190,16 +212,62 @@ public class BitmapAndStringUtils {
     }
 
 
+
+
+
+
+
+
+
+
+
     public static void getPhoto(Activity context, File file){
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+
+        String ad = Environment.getExternalStorageDirectory()+"/com.coder/karl";
+        L.d("ad:"+ad);
         String state = Environment.getExternalStorageState(); //拿到sdcard是否可用的状态码
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (state.equals(Environment.MEDIA_MOUNTED)){   //如果可用
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri imageUri = Uri.fromFile(file);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+
+            if(currentapiVersion<24){
+                Uri imageUri = Uri.fromFile(file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            }else{
+                versionSeven(context);
+                /*
+                ContentValues contentValues = new ContentValues(1);
+                contentValues.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+                Uri uri = context.getApplication().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+                */
+            }
+
             context.startActivityForResult(intent, ApkConfig.PhoneCode);
         }else {
             T.showToast(context,"sdcard不可用");
         }
+    }
+
+
+    public static void versionSeven(Activity activity){
+
+        File outPutImage = new File(activity.getExternalCacheDir(),"outPut_image.jpg");
+
+        try {
+            if(outPutImage.exists()){
+                outPutImage.delete();
+            }
+            outPutImage.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ApkConfig.imageUri = FileProvider.getUriForFile(activity,"com.sy.hzgps.fileprovider",outPutImage);
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, ApkConfig.imageUri);
+        L.d("ApkConfig.imageUri:"+ApkConfig.imageUri.getPath());
+        activity.startActivityForResult(intent,ApkConfig.PhoneCode);
     }
 
 

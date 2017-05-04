@@ -6,7 +6,8 @@ import android.os.Message;
 import com.google.gson.Gson;
 import com.sy.hzadministrator.Config;
 import com.sy.hzadministrator.bean.Error;
-import com.sy.hzadministrator.bean.LogErrBean;
+import com.sy.hzadministrator.bean.LogingBean;
+import com.sy.hzadministrator.bean.LogingErrBean;
 import com.sy.hzadministrator.bean.RequestDataBean;
 
 
@@ -46,12 +47,12 @@ public class PostNet extends Handler {
     }
 
     private void resultLogin(String obj, int type) {
-        RequestDataBean bean = gson.fromJson(obj,RequestDataBean.class);
-        Error error = gson.fromJson(obj,Error.class);
-        if(bean.getStatus()){
+        LogingBean bean = gson.fromJson(obj,LogingBean.class);
+        LogingErrBean error = gson.fromJson(obj,LogingErrBean.class);
+        if(bean.getStatus().equals("true")){
             toHander("true",type,Config.RESULT_SUCCESS);
         }else{
-            toHander(error.getErr(),type,Config.RESULT_ERROR);
+            toHander(error.getReason(),type,Config.RESULT_ERROR);
         }
     }
 

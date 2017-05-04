@@ -79,12 +79,12 @@ public class LoginActivity extends BaseActivity {
         dbHelperLH = new DBHelperLH(this);
         dbHelperLH.getWritableDatabase();
         dbManagerLH = new DBManagerLH(this);
-
+        PermissionUtils.requestMultiPermissions(this,mPermissionGrant);
 
         AndroidCheckVersion  androidVersion =new AndroidCheckVersion(this);
 //        androidVersion.checkVersion();
         if(androidVersion.isLacksOfPermission(AndroidCheckVersion.PERMISSION[0])){
-            L.d("6.0");
+
             init();
         }
 

@@ -1,6 +1,7 @@
 package com.sy.hzgps;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 
 /**
@@ -18,5 +19,15 @@ public class ApkConfig {
 
     public static Bitmap PhotoBitMap;
 
+    public static String PhotoBitMapString;
+
     public static long startTime,endTime,generatePictureTime;
+
+    public static double updateLat,updateLon;
+
+    public static long twoMoth = 5270400000L;
+
+    public static Uri imageUri;
+
+
 }

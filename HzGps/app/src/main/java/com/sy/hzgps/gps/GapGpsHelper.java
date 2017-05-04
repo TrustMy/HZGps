@@ -26,6 +26,7 @@ import com.sy.hzgps.message.ca.CAAlarmReportMessage;
 import com.sy.hzgps.message.ca.CALocationReportMessage;
 import com.sy.hzgps.tool.lh.GaoToGps;
 import com.sy.hzgps.tool.lh.L;
+import com.sy.hzgps.tool.lh.T;
 import com.sy.hzgps.tool.lh.TimeTool;
 import com.sy.hzgps.tool.sy.EngineStatus;
 
@@ -81,7 +82,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
 
     public static Handler mainHandler;
 
-    protected static boolean gpsStarted = false;
+    public static boolean gpsStarted = false;
 
     private DBManagerLH dbManagerLH;
 
@@ -102,27 +103,38 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
                 L.d("坐标:"+aMapLocation.getLatitude()+"|long:"+aMapLocation.getLongitude());
 
 
-                if(ApkConfig.Time == 0){
-                    ApkConfig.Time = aMapLocation.getTime();
-                    ApkConfig.startTime = ApkConfig.Time;
-                }
-                L.d("ApkConfig.startTime :"+ApkConfig.startTime);
-                if(ApkConfig.startTime == 0){
-
-                    ApkConfig.endTime = ApkConfig.Time;
-                    ApkConfig.generatePictureTime = ApkConfig.Time;
-                }else{
-                    ApkConfig.endTime = ApkConfig.startTime;
-                    ApkConfig.generatePictureTime = ApkConfig.endTime;
-                }
-
-                L.d(" ApkConfig.endTime:"+ ApkConfig.endTime+"|generatePictureTime:"+ApkConfig.generatePictureTime );
 
                 if(ApkConfig.Time == aMapLocation.getTime()){
                     L.d("gps  缓存!");
                 }else{
                     L.d("gps  坐标更新");
                     ApkConfig.Time = aMapLocation.getTime();
+
+
+                    //如何 apkConfig time 为0时赋予gps时间
+                    if(ApkConfig.startTime == 0){
+                        ApkConfig.startTime = ApkConfig.Time;
+                    }
+
+
+                    L.d("ApkConfig.startTime :"+ApkConfig.startTime);
+                    //如何apkConfig.starttime == 0 结束时间去当前系统时间
+                    if(ApkConfig.startTime == 0){
+                        ApkConfig.startTime = TimeTool.getSystemTimeDate();
+                    }else{
+                        //如何开始时间不为0  结束时间去gps 时间
+                        ApkConfig.endTime = ApkConfig.Time;
+                        ApkConfig.generatePictureTime = ApkConfig.endTime;
+                    }
+
+                    L.d(" ApkConfig.endTime:"+ ApkConfig.endTime+"|generatePictureTime:"+ApkConfig.generatePictureTime );
+
+
+
+
+
+
+
 
                     Bundle data = new Bundle();
                     float speed = aMapLocation.getSpeed() * 3.6f;   //转成 公里/时
@@ -210,6 +222,11 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
                         lrpMessage.setGpsSpeed(speed);
                         lrpMessage.setBearing(aMapLocation.getBearing());
 
+                        L.d("getLocationType :"+aMapLocation.getLocationType());
+                        L.d("aMapLocation time:"+aMapLocation.getTime()+"aMapLocation lat:"+aMapLocation.getLatitude()+"|aMapLocation lon:"+aMapLocation.getLongitude());
+                        T.showToast(context,"getLocationType:"+aMapLocation.getLocationType());
+                        ApkConfig.updateLat = hm.get("lat");
+                        ApkConfig.updateLon = hm.get("lon");
 
 
                         lrpMessage.setEngineStatus(EngineStatus.ACC_ON.value());
@@ -249,7 +266,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
     };
 
     public void startGps(){
-
+        L.d("gpsStarted:"+gpsStarted);
         if (!gpsStarted) {
 
             L.d("启动定位");
@@ -294,7 +311,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
         // 读取超速报警阈值
         SharedPreferences prefs = context.getSharedPreferences("CommParams", Context.MODE_PRIVATE);
 
-        maxSpeed = prefs.getInt("maxSpeed", 200);
+        maxSpeed = prefs.getInt("maxSpeed", 1000);
 
         SharedPreferences.Editor editor = prefs.edit();
 

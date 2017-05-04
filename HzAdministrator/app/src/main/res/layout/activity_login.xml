@@ -82,7 +82,7 @@
         </LinearLayout>
         <Button
             android:textColor="#ffffff"
-            android:background="@drawable/loging_btn"
+            android:background="@drawable/loging_btn_bg"
             android:onClick="toMain"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"

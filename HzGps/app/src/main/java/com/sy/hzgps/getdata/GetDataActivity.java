@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -75,14 +76,34 @@ public class GetDataActivity extends BaseActivity   {
     private void initDate() {
         List<OrderBean> ml = dbManagerLH.selectOrder();
         if(ml.size()!= 0){
-            getDataRecyclerAdapter.setMl(ml);
-            getDataRecyclerAdapter.notifyDataSetChanged();
+            /*
+            long time = TimeTool.getSystemTimeDate() - ApkConfig.twoMoth ;
+            dbManagerLH.delTimeOrder(time+"");
+            */
+            if(ml.size() == 0){
+                T.showToast(this,"历史记录为空!");
+            }else{
+                getDataRecyclerAdapter.setMl(ml);
+                getDataRecyclerAdapter.notifyDataSetChanged();
+
+            }
+
+
         }else{
             T.showToast(this,"历史记录为空!");
         }
+
     }
 
     private void initView() {
+        //
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+
         dbManagerLH = new DBManagerLH(this);
         dataRecyclerView = findView(R.id.getdate_recycler);
         getDataRecyclerAdapter = new GetDataRecyclerAdapter(GetDataActivity.this);
@@ -115,6 +136,23 @@ public class GetDataActivity extends BaseActivity   {
             }
         };
     }
+
+    /**
+     * toolbar 返回按钮
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     /**
      * 上传订单消息

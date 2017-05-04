@@ -121,7 +121,11 @@ public class DBManagerLH {
 
     public List<OrderBean> selectOrder(){
         List<OrderBean> ml = new ArrayList<>();
-        Cursor cursor = dbWrit.query("history",null,null,null,null,null,null);
+        String sorting = "generatePictureTime desc";//降序    asc  升序
+                                      //表名    输出列名 条件语句  对应于selection语句中占位符的值
+        Cursor cursor = dbWrit.query("history",null,    null,     null,
+                null,     null,     sorting , null);
+        //      groupBy   having     orderBy   limit
         OrderBean orderBean = null;
 
         if(cursor.moveToFirst()){
@@ -221,7 +225,8 @@ public class DBManagerLH {
      */
     public List<GpsBean> selectGps (){
         List<GpsBean> ml = new ArrayList<>();
-        Cursor cursor = dbWrit.query("gpsHistory",null,null,null,null,null,null);
+//        String sorting = "time desc";
+        Cursor cursor = dbWrit.query("gpsHistory",null,null,null,null,null,null,null);
 
         if(cursor.moveToFirst()){
             do {
@@ -241,5 +246,9 @@ public class DBManagerLH {
     public void delGps(){
         dbWrit.delete("gpsHistory",null,null);
         L.d("delGps suceess!");
+    }
+
+    public void delTimeOrder(String time){
+        dbWrit.delete("history","generatePictureTime <?",new String[]{time});
     }
 }

@@ -1,5 +1,6 @@
 package com.sy.hzgps.tool.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -42,7 +43,7 @@ public class DialogTool {
      * @param bitmap
      * @param time
      */
-    public static void showDialog(Context context, int layout, Bitmap bitmap,String time){
+    public static void showDialog(Activity context, int layout, Bitmap bitmap, String time){
 
         if(dialog  == null){
             view = LayoutInflater.from(context).inflate(layout,null);
@@ -65,12 +66,15 @@ public class DialogTool {
         dialog.setContentView(view);
 //        dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
-        dialog.show();
+        if(!context.isFinishing()){
+            dialog.show();
+        }
+
 
     }
 
 
-    public static void showPhotoDialog(Context context, int layout, Bitmap bitmap,String time){
+    public static void showPhotoDialog(Activity context, int layout, Bitmap bitmap,String time){
 
             PhotoView = LayoutInflater.from(context).inflate(layout,null);
             Photo = (ImageView) PhotoView.findViewById(R.id.dialog_photo_img);
@@ -99,7 +103,10 @@ public class DialogTool {
         photoDialog.setContentView(PhotoView);
 //        dialog.setCancelable(true);
         photoDialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
-        photoDialog.show();
+        if(!context.isFinishing()){
+            photoDialog.show();
+        }
+
     }
 
     public interface PhoneOnClick {

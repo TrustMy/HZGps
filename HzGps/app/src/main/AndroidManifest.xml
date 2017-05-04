@@ -44,10 +44,24 @@
     <application
         android:name=".MyContext"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/drvice"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:authorities="com.sy.hzgps.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+
+        </provider>
+
+
+
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
@@ -57,7 +71,7 @@
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:label="司机">
+            android:label="传亮司机">
 
         </activity>
         <activity android:name=".QRCodeActivity"
@@ -67,6 +81,7 @@
 
         <activity android:name=".logregist.LoginActivity"
             android:screenOrientation="portrait"
+            android:label="传亮司机"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,6 +91,7 @@
         </activity>
         <activity android:name=".getdata.GetDataActivity"
             android:screenOrientation="portrait"
+            android:label="历史订单"
          ></activity>
 
 

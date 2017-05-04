@@ -72,7 +72,8 @@ public class DBManagerLH {
 
     public List<OrderBean> select (){
         List<OrderBean> ml = new ArrayList<>();
-        Cursor cursor = dbWrit.query("history",null,null,null,null,null,null);
+        String sorting = "generatePictureTime desc";
+        Cursor cursor = dbWrit.query("history",null,null,null,null,null,sorting,null);
         OrderBean qRcodeBean = null;
 
         if(cursor.moveToFirst()){
@@ -144,4 +145,9 @@ public class DBManagerLH {
         }
     }
 
+
+
+    public void deleTimeOrder(String time ){
+        dbWrit.delete("history","generatePictureTime >?",new String[]{time});
+    }
 }
