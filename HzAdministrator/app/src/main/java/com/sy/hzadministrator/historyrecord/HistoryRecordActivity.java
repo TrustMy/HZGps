@@ -131,8 +131,7 @@ public class HistoryRecordActivity extends BaseActivity {
         if(ml.size() == 0){
             T.showToast(HistoryRecordActivity.this,"历史记录为空!");
         }else{
-            long time = TimeTool.getSystemTimeDate() - Config.twoMoth ;
-            dbManagerLH.deleTimeOrder(time+"");
+
             if(ml.size() == 0){
                 T.showToast(HistoryRecordActivity.this,"历史记录为空!");
             }else{
