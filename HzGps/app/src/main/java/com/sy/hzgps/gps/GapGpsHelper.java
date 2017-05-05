@@ -224,7 +224,7 @@ public class GapGpsHelper extends GpsHelper implements Runnable{
 
                         L.d("getLocationType :"+aMapLocation.getLocationType());
                         L.d("aMapLocation time:"+aMapLocation.getTime()+"aMapLocation lat:"+aMapLocation.getLatitude()+"|aMapLocation lon:"+aMapLocation.getLongitude());
-                        T.showToast(context,"getLocationType:"+aMapLocation.getLocationType());
+//                        T.showToast(context,"getLocationType:"+aMapLocation.getLocationType());
                         ApkConfig.updateLat = hm.get("lat");
                         ApkConfig.updateLon = hm.get("lon");
 

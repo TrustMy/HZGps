@@ -85,6 +85,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class MainActivity extends BaseActivity {
+    private Context context = MainActivity.this;
+
     private MyService myServer = null;
     private ImageView logo;
     private TextView workMsg, gpsMsg, timeTv;
@@ -113,9 +115,10 @@ public class MainActivity extends BaseActivity {
     //flag 防止7.0手机弹出两次dialog
     private int photo = 0;
 
-
+    /*
     private MapView mMapView;
     private AMap aMap;
+    */
 
     private CoordinateTransformation coordinateTransformation;
     public Handler dataHandler = new Handler() {
@@ -127,9 +130,9 @@ public class MainActivity extends BaseActivity {
                         DecimalFormat df = new DecimalFormat("#0.0");
                         ShowGpsBean showGpsBean = (ShowGpsBean) msg.obj;
                         gpsMsg.setText(df.format(showGpsBean.getSpeed()) + "");
-
+                        /*
                         shwoGps(showGpsBean);
-
+                        */
 
                     }
                     break;
@@ -160,10 +163,12 @@ public class MainActivity extends BaseActivity {
 
                 case Config.ORDER:
                     if (msg.arg1 == Config.RESULT_SUCCESS) {
-                        T.showToast(MainActivity.this, " 提交订单成功!");
+                        Toast.makeText(context,"提交订单成功!",Toast.LENGTH_SHORT).show();
+//                        T.showToast(MainActivity.this, " 提交订单成功!");
                         saveData(Config.SAVE_STATUS_SUCCESS);
                     } else {
-                        T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
+                        Toast.makeText(context,"提交订单失败!请在工作表中重新提交!",Toast.LENGTH_SHORT).show();
+//                        T.showToast(MainActivity.this, " 提交订单失败!请在工作表中重新提交!");
                         saveData(Config.SAVE_STATUS_ERROR);
                     }
                     ApkConfig.startTime = 0 ;
@@ -178,7 +183,7 @@ public class MainActivity extends BaseActivity {
 
 
 
-
+/*
     private void shwoGps(ShowGpsBean showGpsBean) {
 
         LatLng gps = new LatLng(showGpsBean.getLat(),showGpsBean.getLon());
@@ -196,6 +201,7 @@ public class MainActivity extends BaseActivity {
         )));
 
     }
+    */
 
     /**
      * 设置二维码生成的内容
@@ -246,8 +252,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(android.os.Build.VERSION.SDK_INT >= 23){
+            PermissionUtils.requestMultiPermissions(this,mPermissionGrant);
 
-        PermissionUtils.requestMultiPermissions(this,mPermissionGrant);
+        }
         /*
         AndroidCheckVersion  androidVersion =new AndroidCheckVersion(this);
         if(androidVersion.isLacksOfPermission(AndroidCheckVersion.PERMISSION[0])){
@@ -255,7 +263,7 @@ public class MainActivity extends BaseActivity {
         }
         */
 
-
+        /*
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
@@ -263,6 +271,7 @@ public class MainActivity extends BaseActivity {
         if (aMap == null) {
             aMap = mMapView.getMap();
         }
+        */
 
         coordinateTransformation = new CoordinateTransformation(MainActivity.this);
 
@@ -367,7 +376,7 @@ public class MainActivity extends BaseActivity {
             end.setVisibility(View.VISIBLE);
 
             logo.setImageResource(R.drawable.truck_on);
-//            promptTv.setVisibility(View.VISIBLE);
+            promptTv.setVisibility(View.VISIBLE);
             promptWorkTv.setVisibility(View.VISIBLE);
 
             startLocationEd.setEnabled(false);
@@ -454,7 +463,7 @@ public class MainActivity extends BaseActivity {
         unbindService(serviceConnection);
 
         super.onDestroy();
-        mMapView.onDestroy();
+//        mMapView.onDestroy();
     }
 
 
@@ -462,14 +471,14 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
-      mMapView.onPause();
+//      mMapView.onPause();
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，
         // 保存地图当前的状态
-       mMapView.onSaveInstanceState(outState);
+//       mMapView.onSaveInstanceState(outState);
     }
 
     @Override
@@ -479,7 +488,7 @@ public class MainActivity extends BaseActivity {
         if (s != null) {
             workMsg.setText(s);
         }
-       mMapView.onResume();
+//       mMapView.onResume();
     }
 
     /**
@@ -735,7 +744,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
+    /*
     public void selecGps(View v){
         List<GpsBean> mGps =  dbManagerLH.selectGps();
         List<LatLng> ml = new ArrayList<>();
@@ -765,10 +774,11 @@ public class MainActivity extends BaseActivity {
         }
 
     }
+    */
 
 
     public void delGps(View v){
-       aMap.clear();
+//       aMap.clear();
         dbManagerLH.delGps();
     }
 

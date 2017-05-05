@@ -146,7 +146,7 @@ public class PermissionUtils {
             L.d("all permission success");
             permissionGrant.onPermissionGranted(CODE_MULTI_PERMISSION);
         } else {
-            openSettingActivity(activity, "those permission need granted!");
+            openSettingActivity(activity, "请允许应用申请的权限,否则无法正常使用!");
         }
 
     }

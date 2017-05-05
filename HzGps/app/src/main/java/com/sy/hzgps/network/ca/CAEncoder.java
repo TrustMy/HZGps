@@ -225,7 +225,7 @@ public class CAEncoder extends ProtocolEncoderAdapter {
 
 		body.addAdditional(engineStatus);
 
-		dbManagerLH.addGps(gpsMessage.getLat(),gpsMessage.getLng(),gpsMessage.getGpsTime(),gpsMessage.getEngineStatus());
+//		dbManagerLH.addGps(gpsMessage.getLat(),gpsMessage.getLng(),gpsMessage.getGpsTime(),gpsMessage.getEngineStatus());
 
 		if ( engineStatus.getEngineStatus() == 1 || engineStatus.getEngineStatus() == 4 ) {
 			body.setAccOn(true);
